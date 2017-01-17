@@ -713,6 +713,28 @@ def printToPDF(pdf_name,invoices):
 
 	# create and add the "watermark"
 	#(which is the new pdf) on the existing page
+
+	#Sort pages
+	#pages_to_print_first = []
+	#pages_to_print_last = []
+	#for p in range(page_count):
+	#	for invoice in invoices:
+	#		if(invoice.page == p):
+	#			if(invoice.num != None and
+	#				invoice.po != None and
+	#				invoice.job != None):
+#						pages_to_print_first.append(p)
+	#			else:
+	#				pages_to_print_last.append(p)
+
+	#pages_to_print = pages_to_print_first + pages_to_print_last#
+
+	#print pages_to_print
+	#print len(pages_to_print)
+	#exit()
+
+
+
 	for p in range(page_count):
 		packet = StringIO.StringIO()
 		# create a new PDF with Reportlab
@@ -729,9 +751,9 @@ def printToPDF(pdf_name,invoices):
 
 		can = canvas.Canvas(packet, pagesize=letter)
 		#can.rect(x-20, y_min-20, 400, 100)
-		x=200
+		x=150
 		#x_max = 300
-		y_min = 100
+		y_min = 150
 		y_max = 190
 
 		y_stack = [y_max]
@@ -739,23 +761,23 @@ def printToPDF(pdf_name,invoices):
 		if(len(invoice_string) < 50):
 			last_y = y_stack[-1]
 			y_stack.append(last_y - 20)
-			can.drawString(x, last_y,		"INVOICE   #: " + invoice_string)
+			can.drawString(x, last_y,		"INVOICE#: " + invoice_string)
 
 		if(len(job_string) < 50):
 			last_y = y_stack[-1]
 			y_stack.append(last_y - 20)
-			can.drawString(x, last_y,		"JOB       #: " + job_string)
+			can.drawString(x, last_y,		"JOB        #: " + job_string)
 		else:
 			while len(job_string) > 0:
 				last_y = y_stack[-1]
 				y_stack.append(last_y - 20)
-				can.drawString(x, last_y,	"JOB       #: " + job_string[0:50])
+				can.drawString(x, last_y,	"JOB        #: " + job_string[0:50])
 				job_string = job_string[50:]
 			
 		if(len(po_string) < 50):
 			last_y = y_stack[-1]
 			y_stack.append(last_y - 20)
-			can.drawString(x, last_y,		"PO        #: " + po_string)
+			can.drawString(x, last_y,		"PO         #: " + po_string)
 
 		width = 400
 		height = 400
@@ -796,8 +818,6 @@ def main():
 	# and B) holds
 	invoices = Invoices()
 	for page in range(pdf_count):
-	#	if(page<19 or page > 22):
-	#		continue;
 
 		print "About to load " + str(page)
 		try:

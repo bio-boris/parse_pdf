@@ -8,9 +8,6 @@ from reportlab.lib.pagesizes import letter
 import re
 import sys
 
-#How the script works
-#Loads up the
-
 
 class Invoice:
 	page = None;
@@ -808,8 +805,8 @@ def main():
 		pdf_name = sys.argv[1]
 		print "About to open " + str(pdf_name)
 	else:
-		pdf_name = "binder_combined copy.pdf"
-		#exit("Error: Please Input a PDF")
+		#pdf_name = "binder_combined copy.pdf"
+		exit("Error: Please Input a PDF")
 
 	pdf = pdfquery.PDFQuery(pdf_name)
 	pdf_count = pdf.doc.catalog['Pages'].resolve()['Count']

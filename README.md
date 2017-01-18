@@ -6,7 +6,7 @@
 
 # Install Python
 * https://www.python.org/downloads/release/python-2713/
-* }Choose the Windows MSI installer , download and install
+* Choose the Windows MSI installer , download and install
 
 (Make sure Python is added to Path,
  the checkbox should be automatically

@@ -100,13 +100,14 @@ class Application:
 
     def processPDF(self):
         fp = self.filename
-        command = "pdf_query.py " + str(fp) + " > " + self.log
+        command = "pdf_watermark.py " + str(fp) + " > " + self.log
         result =subprocess.check_output( command,  shell=True )
         
 
     def start_thread(self):
         self.watermark.set("Working...")
-        self.watermark_pdf_btn['state'] = 'disable'
+        self.watermark_
+        _btn['state'] = 'disable'
         self.progbar.start()
         self.secondary_thread = threading.Thread(target=self.processPDF)
         self.secondary_thread.start()

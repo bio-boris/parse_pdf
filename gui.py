@@ -100,10 +100,10 @@ class Application:
 
     def processPDF(self):
         fp = self.filename
-        cwd = os.getcwd()
-        f = open(cwd + self.log, "w")
+        #cwd = os.getcwd()
+        #f = open(cwd + self.log, "w")
         command = 'python pdf_watermark.py "' + str(fp)  + '"'
-        result =subprocess.check_output( command,  shell=True, stdout=f )
+        result =subprocess.check_output( command,  shell=True,  )
         
 
     def start_thread(self):

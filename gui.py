@@ -41,7 +41,7 @@ class Application:
       
         #Files
         self.outfile = "none"
-        self.log = "log.txt"
+        self.log = "C:\parse_pdf-master\log.txt"
 
 
         self.pdfFilePathLabel = Label(frame,textvariable=self.pdf_in_filepath).grid(row=0,column=1)

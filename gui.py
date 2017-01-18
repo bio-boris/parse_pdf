@@ -100,7 +100,8 @@ class Application:
 
     def processPDF(self):
         fp = self.filename
-        f = open(self.log, "w")
+        cwd = os.getcwd()
+        f = open(cwd + self.log, "w")
         command = 'python pdf_watermark.py "' + str(fp)  + '"'
         result =subprocess.check_output( command,  shell=True, stdout=f )
         

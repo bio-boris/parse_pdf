@@ -801,7 +801,7 @@ def printToPDF(pdf_name,invoices):
 
 def main():
 	#1. Loads up the PDF and gets the number of pages
-	if len(sys.argv) == 2:
+	if len(sys.argv) >= 2:
 		pdf_name = sys.argv[1]
 		print "About to open " + str(pdf_name)
 	else:

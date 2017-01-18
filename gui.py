@@ -106,8 +106,7 @@ class Application:
 
     def start_thread(self):
         self.watermark.set("Working...")
-        self.watermark_
-        _btn['state'] = 'disable'
+        self.watermark_pdf_btn['state'] = 'disable'
         self.progbar.start()
         self.secondary_thread = threading.Thread(target=self.processPDF)
         self.secondary_thread.start()

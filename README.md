@@ -16,6 +16,7 @@
 
 # Install LXML
 Open CMD window
+
     cd C:\parse_pdf-master
     pip install wheel
     pip install lxml-3.6.4-cp27-cp27m-win32.whl

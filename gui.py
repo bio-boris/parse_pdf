@@ -102,7 +102,7 @@ class Application:
         fp = self.filename
         #cwd = os.getcwd()
         #f = open(cwd + self.log, "w")
-        command = 'python pdf_watermark.py "' + str(fp)  + '"'
+        command = 'python C:\parse_pdf-master\pdf_watermark.py "' + str(fp)  + '"'
         result =subprocess.check_output( command,  shell=True,  )
         
 

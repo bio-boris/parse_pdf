@@ -9,7 +9,7 @@ import re
 import sys
 
 print "Printing STDOUT to log.txt"
-sys.stdout = open('log.txt', 'w')
+sys.stdout = open('C:\parse_pdf-master\log.txt', 'w')
 
 
 class Invoice:

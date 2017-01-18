@@ -8,6 +8,9 @@ from reportlab.lib.pagesizes import letter
 import re
 import sys
 
+print "Printing STDOUT to log.txt"
+sys.stdout = open('log.txt', 'w')
+
 
 class Invoice:
 	page = None;

@@ -28,7 +28,7 @@ Open CMD window
     pip install pdfquery
     pip install reportlab
 
-# Run the GUI.py , open with C:/Python27/python.exe
+# Run the GUI.py , open with C:\Python27\python.exe
 
 * Select PDF, watermark it
 * The PDF will be generated in the same directory as the PDF you selected

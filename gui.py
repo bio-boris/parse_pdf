@@ -1,16 +1,20 @@
 #!/usr/bin/env python
 import os
+import platform
+import sys
 import time
 import subprocess
+import threading
 from Tkinter import *
 from ttk import *
 from tkFileDialog import askopenfilename
 from tkFileDialog import askdirectory
 from tkMessageBox import *
 
+global pwd
+pwd = (os.path.dirname(os.path.abspath(__file__)))
 
-import time
-import threading
+os.chdir(pwd)
 
 class Application:
     def __init__(self, master):
@@ -25,9 +29,16 @@ class Application:
         self.watermark_pdf_btn = Button(frame, text="WaterMark PDF File", command=self.start_thread,width=25)
         self.watermark_pdf_btn.grid(row=1)
         self.watermark_pdf_btn['state'] = 'disable'
+        #Select Watermark button
+        self.view_pdf_btn = Button(frame, text="View watermarked PDF", command=self.viewPDF,width=25)
+        self.view_pdf_btn.grid(row=2)
+        self.view_pdf_btn['state'] = 'disable'
+        
+
+
         #View Logfile Watermark button
         self.viewLogfile_btn = Button(frame, text="View log.txt", command=self.viewLogFile,width=25)
-        self.viewLogfile_btn.grid(row=2)
+        self.viewLogfile_btn.grid(row=3)
         #self.viewLogfile_btn['state'] = 'disable'
         
         #Labels
@@ -41,7 +52,7 @@ class Application:
       
         #Files
         self.outfile = "none"
-        self.log = "C:\parse_pdf-master\log.txt"
+        self.log = pwd  + "/log.txt"
 
 
         self.pdfFilePathLabel = Label(frame,textvariable=self.pdf_in_filepath).grid(row=0,column=1)
@@ -58,6 +69,26 @@ class Application:
 
     def noLogPopup(self):
         showinfo("No Log", self.log + " not found")
+
+    def noPDFPopup(self):
+        showinfo("PDF", self.outfile + " not found")
+
+
+
+    def viewPDF(self):
+            if(not os.path.isfile(self.outfile)):
+                return self.noPDFPopup()
+            else:
+                self.open_file(self.outfile);
+
+
+    def open_file(self,path):
+        if platform.system() == "Windows":
+            os.startfile(path)
+        elif platform.system() == "Darwin":
+            subprocess.Popen(["open", path])
+        else:
+            subprocess.Popen(["xdg-open", path])
 
 
     def viewLogFile(self):
@@ -92,7 +123,7 @@ class Application:
             self.pdf_in_filepath.set("That's not a PDF!")
         elif(len(filename) > 1):
             self.pdf_in_filepath.set("Selected Filepath:"  + str(filename))
-            self.outfile = str(os.path.basename(filename) + ".watermarked.pdf"  ) 
+            self.outfile =  os.path.dirname(filename) + "/" +  str(os.path.basename(filename) + ".watermarked.pdf"  ) 
             self.pdf_out_filepath.set("Output File: " + self.outfile )
             self.filename = filename
             self.watermark_pdf_btn['state'] = 'normal'
@@ -100,15 +131,17 @@ class Application:
 
     def processPDF(self):
         fp = self.filename
-        #cwd = os.getcwd()
-        #f = open(cwd + self.log, "w")
-        command = 'python C:\parse_pdf-master\pdf_watermark.py "' + str(fp)  + '"'
-        result =subprocess.check_output( command,  shell=True,  )
+        f = open(self.log, "w")
+        result =subprocess.check_output( ['python','pdf_watermark.py',str(fp)],  shell=False,  )
+        f.write(result)
         
 
     def start_thread(self):
         self.watermark.set("Working...")
         self.watermark_pdf_btn['state'] = 'disable'
+        self.viewLogfile_btn['state'] = 'disable'
+        self.view_pdf_btn['state'] = 'disable'
+
         self.progbar.start()
         self.secondary_thread = threading.Thread(target=self.processPDF)
         self.secondary_thread.start()
@@ -121,6 +154,7 @@ class Application:
         else:
             self.watermark_pdf_btn['state'] = 'normal'
             self.viewLogfile_btn['state'] = 'normal'
+            self.view_pdf_btn['state'] = 'normal'
             self.watermark.set("Done")
             self.successPopup()
             self.progbar.stop()  

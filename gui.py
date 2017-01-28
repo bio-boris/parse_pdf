@@ -29,15 +29,15 @@ class Application:
         self.watermark_pdf_btn = Button(frame, text="WaterMark PDF File", command=self.start_thread,width=25)
         self.watermark_pdf_btn.grid(row=1)
         self.watermark_pdf_btn['state'] = 'disable'
-        #Select Watermark button
+        #View Watermark button
         self.view_pdf_btn = Button(frame, text="View watermarked PDF", command=self.viewPDF,width=25)
         self.view_pdf_btn.grid(row=2)
-        self.view_pdf_btn['state'] = 'disable'
+        self.view_pdf_btn['state'] = 'normal'
         
 
 
         #View Logfile Watermark button
-        self.viewLogfile_btn = Button(frame, text="View log.txt", command=self.viewLogFile,width=25)
+        self.viewLogfile_btn = Button(frame, text="Peek at log.txt", command=self.viewLogFile,width=25)
         self.viewLogfile_btn.grid(row=3)
         #self.viewLogfile_btn['state'] = 'disable'
         
@@ -83,6 +83,9 @@ class Application:
 
 
     def open_file(self,path):
+        import unicodedata
+        path = unicodedata.normalize('NFKD', path).encode('ascii','ignore')
+
         if platform.system() == "Windows":
             os.startfile(path)
         elif platform.system() == "Darwin":
@@ -139,8 +142,9 @@ class Application:
     def start_thread(self):
         self.watermark.set("Working...")
         self.watermark_pdf_btn['state'] = 'disable'
-        self.viewLogfile_btn['state'] = 'disable'
         self.view_pdf_btn['state'] = 'disable'
+        self.select_pdf_btn['state'] = 'disable'
+
 
         self.progbar.start()
         self.secondary_thread = threading.Thread(target=self.processPDF)
@@ -153,8 +157,9 @@ class Application:
             self.master.after(50, self.check_thread)
         else:
             self.watermark_pdf_btn['state'] = 'normal'
-            self.viewLogfile_btn['state'] = 'normal'
             self.view_pdf_btn['state'] = 'normal'
+            self.select_pdf_btn['state'] = 'normal'
+
             self.watermark.set("Done")
             self.successPopup()
             self.progbar.stop()  

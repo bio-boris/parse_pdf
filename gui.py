@@ -84,10 +84,10 @@ class Application:
 
     def open_file(self,path):
         import unicodedata
-        path = unicodedata.normalize('NFKD', path).encode('ascii','ignore')
-
+    
         if platform.system() == "Windows":
-            os.startfile(path)
+            os.startfile(os.path.normpath(path))
+            
         elif platform.system() == "Darwin":
             subprocess.Popen(["open", path])
         else:

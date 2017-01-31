@@ -5,7 +5,7 @@
 
 # Install Python
 * https://www.python.org/downloads/release/python-2713/
-* Choose the Windows MSI installer , download and install
+* Choose the Windows MSI installer , download and install the 64 Bit Version of python
 
 (Make sure Python is added to Path,
  the checkbox should be automatically
@@ -14,12 +14,16 @@
 # Install VC Python
 * http://aka.ms/vcpython27
 
+# INSTALL
+Run install.bat  or follow the instructions below
+
 # Install LXML
 Open CMD window
 
     cd C:\parse_pdf-master
     pip install wheel
-    pip install lxml-3.6.4-cp27-cp27m-win32.whl
+    pip install lxml-3.6.4-cp27-cp27m-win32.whl (for 32bit will not work large PDFS)
+    pip install lxml-3.6.4-cp27-cp27m-win_amd64.whl (for 64bit)
 
 # Install required libraries
     pip install pypdf

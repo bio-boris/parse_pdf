@@ -7,12 +7,20 @@ import re
 
 
 class Invoice:
+	complete = False;
 	page = None;
 	num = None;
 	po = None;
 	job = None;
 	identifier = None;
 
+	def setCompletionFlag(self):
+		if(self.job !=None and self.po !=None):
+			if(len(self.job) > 1 and len(self.po) > 1):
+				self.complete = True
+		else:
+			self.complete = False
+		return self.complete
 
 	def splitLongLines(self,string):
 		return string
@@ -21,27 +29,47 @@ class Invoice:
 
 	#Removes whitespace
 	def cleanInvoice(self):
+		pattern = "[^0-9a-zA-Z/\ .]"
 		if self.num != None:
 			self.num = self.num.lstrip().rstrip()
 			self.num = self.splitLongLines(self.num)
+			self.num = self.num.encode('ascii',errors='ignore');
+			self.num = re.sub(pattern + "+","",self.num)
 			if(not self.num):
 				self.num = None
 		if self.po != None:
 			self.po = self.po.lstrip().rstrip()
 			self.po = self.splitLongLines(self.po)
+			self.po = self.po.encode('ascii',errors='ignore');
+			self.po = re.sub(pattern + "+","",self.po)
+
 			if(not self.po):
 				self.po = None
 		if self.job !=None:
 			self.job = self.job.lstrip().rstrip()
 			self.job = self.splitLongLines(self.job)
+			self.job = self.job.encode('ascii',errors='ignore');
+			self.job = re.sub(pattern + "+","",self.job)
+
 			if(not self.job):
 				self.job = None
 
 	def printInvoice(self):
 		self.cleanInvoice()
-		print 'Invoice:' + str(self.num),
-		print 'PO:' + str(self.po),
-		print "Job:" + str(self.job)
+		if(self.num):
+			i= 'Invoice[' + str(self.num.encode('ascii',errors='ignore').decode('ascii',errors='ignore')) + "]"
+		else:
+			i= 'Invoice[]'
+		if(self.po):
+			p= 'PO[' + str(self.po.encode('ascii',errors='ignore').decode('ascii',errors='ignore'))+ "]"
+		else:
+			p='PO[]'
+		if(self.job):
+			j= "Job[" + str(self.job.encode('utf-8').decode('utf-8','ignore'))+ "]"
+		else:
+			j="Job[]"
+
+		print i,p,j
 
 
 
@@ -53,7 +81,8 @@ class Invoices:
 
 
 	def addNonInvoicePage(__self__):
-		__self__.invoices.append(None);
+		i = Invoice()
+		__self__.invoices.append(i);
 
 	def add(__self__,page,invoice):
 		invoice.page = page
@@ -76,11 +105,20 @@ class Invoices:
 		#Get Purchase Order PO#
 		po_string = 'PURCHASE ORDER NUMBER'
 		pdf_id =  pdf.pq('LTTextLineHorizontal:contains("'+str(po_string)+'")')
-		left_corner = float(pdf_id.attr('x0'))
-		bottom_corner = float(pdf_id.attr('y0'))
-		invoice.po  = pdf.pq('LTTextLineHorizontal:in_bbox("%s, %s, %s, %s")' % (left_corner, bottom_corner-15, left_corner+150, bottom_corner)).text()
+		#x0 = float(pdf_id.attr('x0')) #Left X
+		#y0 = float(pdf_id.attr('y0')) #Lower Y
+		#x1 = float(pdf_id.attr('x1')) #Right X
+		#y1 = float(pdf_id.attr('y1')) #Upper Y
+		#print (x0,y0,x1,y1);
 
-
+		if(pdf_id):
+			left_corner = float(pdf_id.attr('x0'))
+			bottom_corner = float(pdf_id.attr('y0'))
+			invoice.po  = pdf.pq('LTTextLineHorizontal:in_bbox("%s, %s, %s, %s")' % (left_corner, bottom_corner-15, left_corner+150, bottom_corner)).text()
+		else:
+			invoice.po  = pdf.pq('LTTextLineHorizontal:overlaps_bbox("%s, %s, %s, %s")' % (366, 534, 451, 541)).text()
+	
+		
 		#pdf_id = pdf.pq('LTTextLineHorizontal:contains("'+str('RELEASE NUMBER')+'")') 
 		#x0 = float(pdf_id.attr('x0')) #Left X
 		#y0 = float(pdf_id.attr('y0')) #Lower Y
@@ -93,6 +131,20 @@ class Invoices:
 	def wesco(invoice,pdf):
 		#INVOICE
 		invoice.num  = pdf.pq('LTTextLineHorizontal:overlaps_bbox("%s, %s, %s, %s")' % (525, 736, 600, 745)).text()
+		#PO
+		invoice.po  = pdf.pq('LTTextLineHorizontal:overlaps_bbox("%s, %s, %s, %s")' % (400, 700, 480, 711)).text()
+		#JOB
+		pdf_id =  pdf.pq('LTTextLineHorizontal:contains("'+str('SHIP TO')+'")')
+		if(pdf_id):
+			invoice.job  = pdf.pq('LTTextLineHorizontal:overlaps_bbox("%s, %s, %s, %s")' % (315, 590, 400, 628)).text()
+			if(invoice.job == ''):
+				invoice.job  = pdf.pq('LTTextLineHorizontal:overlaps_bbox("%s, %s, %s, %s")' % (315, 550, 400, 628)).text()
+			
+
+		else:
+			invoice.job = ''
+
+
 		return invoice
 
 	def apache_rentals(invoice,pdf):
@@ -165,8 +217,11 @@ class Invoices:
 		#x1 = float(pdf_id.attr('x1')) #Right X
 		#y1 = float(pdf_id.attr('y1')) #Upper Y
 		invoice.po  = pdf.pq('LTTextLineHorizontal:overlaps_bbox("%s, %s, %s, %s")' % (495, 516, 600, 527)).text()
-		print invoice.po
-			
+		#print invoice.po
+		invoice.po = invoice.po.replace("CUSTOMER",'')
+		invoice.po = invoice.po.replace("ORDER",'')
+		invoice.po = invoice.po.replace("NO.",'')
+		invoice.po = invoice.po.lstrip();
 
 
 		return invoice
@@ -207,6 +262,12 @@ class Invoices:
 
 		invoice.job  = pdf.pq('LTTextLineHorizontal:overlaps_bbox("%s, %s, %s, %s")' % (480, 593.305-10, 520, 603)).text()
 		invoice.job = invoice.job.replace("REFERENCE",'')
+
+		if(not invoice.job):
+			invoice.job  = pdf.pq('LTTextLineHorizontal:overlaps_bbox("%s, %s, %s, %s")' % (400, 693, 440, 704)).text()
+			invoice.job = invoice.job.replace("JOB",'')
+			invoice.job = invoice.job.replace("NAME",'')
+		
 
 		return invoice
 
@@ -348,33 +409,61 @@ class Invoices:
 	def graybar(invoice,pdf):
 		#INVOICE
 		pdf_id = pdf.pq('LTTextLineHorizontal:contains("'+str('Invoice No:')+'")') 
-		x0 = float(pdf_id.attr('x0')) #Left X
-		y0 = float(pdf_id.attr('y0')) #Lower Y
-		x1 = float(pdf_id.attr('x1')) #Right X
-		y1 = float(pdf_id.attr('y1')) #Upper Y
-		invoice.num  = pdf.pq('LTTextLineHorizontal:overlaps_bbox("%s, %s, %s, %s")' % (x0,y0,x1+200,y1)).text()
-		invoice.num = invoice.num.replace("Invoice No:",'')
+
+		if(pdf_id.attr('x0')):
+			x0 = float(pdf_id.attr('x0')) #Left X
+			y0 = float(pdf_id.attr('y0')) #Lower Y
+			x1 = float(pdf_id.attr('x1')) #Right X
+			y1 = float(pdf_id.attr('y1')) #Upper Y
+			invoice.num  = pdf.pq('LTTextLineHorizontal:overlaps_bbox("%s, %s, %s, %s")' % (x0,y0-1,x1+200,y1+1)).text()
+			invoice.num = invoice.num.replace("Invoice",'')
+			invoice.num = invoice.num.replace("No: ",'')
+			invoice.num = invoice.num.replace("Date: ",'')
+		else:
+			pdf_id = pdf.pq('LTTextLineHorizontal:contains("'+str('989522039')+'")') 
+			x0 = float(pdf_id.attr('x0')) #Left X
+			y0 = float(pdf_id.attr('y0')) #Lower Y
+			x1 = float(pdf_id.attr('x1')) #Right X
+			y1 = float(pdf_id.attr('y1')) #Upper Y
 		
+		
+
 		#PO
-		pdf_id = pdf.pq('LTTextLineHorizontal:contains("'+str('Order No:')+'")') 
-		x0 = float(pdf_id.attr('x0')) #Left X
-		y0 = float(pdf_id.attr('y0')) #Lower Y
-		x1 = float(pdf_id.attr('x1')) #Right X
-		y1 = float(pdf_id.attr('y1')) #Upper Y
-		invoice.po  = pdf.pq('LTTextLineHorizontal:in_bbox("%s, %s, %s, %s")' % (x0,y0,x1+200,y1)).text()
-		invoice.po= invoice.po.replace("Order No:",'')
-		
+		pdf_id = pdf.pq('LTTextLineHorizontal:contains("'+str('Order No')+'")') 
+		if pdf_id.attr('x0'):
+			x0 = float(pdf_id.attr('x0')) #Left X
+			y0 = float(pdf_id.attr('y0')) #Lower Y
+			x1 = float(pdf_id.attr('x1')) #Right X
+			y1 = float(pdf_id.attr('y1')) #Upper Y
+			invoice.po  = pdf.pq('LTTextLineHorizontal:in_bbox("%s, %s, %s, %s")' % (x0,y0,x1+200,y1)).text()
+			invoice.po= invoice.po.replace("Order No:",'')
+
+			if(not invoice.po):
+				invoice.po  = pdf.pq('LTTextLineHorizontal:in_bbox("%s, %s, %s, %s")' % (70, 521, 115, 532)).text()
+		else:
+			invoice.po  = pdf.pq('LTTextLineHorizontal:in_bbox("%s, %s, %s, %s")' % (70, 521, 115, 532)).text()
+			
+	
 		#JOB
 		pdf_id = pdf.pq('LTTextLineHorizontal:contains("'+str('Rt.')+'")') 
-		x0 = float(pdf_id.attr('x0')) #Left X
-		y0 = float(pdf_id.attr('y0')) #Lower Y
-		x1 = float(pdf_id.attr('x1')) #Right X
-		y1 = float(pdf_id.attr('y1')) #Upper Y
-		invoice.job  = pdf.pq('LTTextLineHorizontal:in_bbox("%s, %s, %s, %s")' % (x0,y0,x1+200,y1)).text()
-		invoice.job= invoice.job.replace("Rt.",'')
-		invoice.job= invoice.job.replace("TO",'')
+		if( pdf_id.attr('x0')):
+			x0 = float(pdf_id.attr('x0')) #Left X
+			y0 = float(pdf_id.attr('y0')) #Lower Y
+			x1 = float(pdf_id.attr('x1')) #Right X
+			y1 = float(pdf_id.attr('y1')) #Upper Y
+			invoice.job  = pdf.pq('LTTextLineHorizontal:in_bbox("%s, %s, %s, %s")' % (x0,y0,x1+200,y1)).text()
+			invoice.job= invoice.job.replace("Rt.",'')
+			invoice.job= invoice.job.replace("TO",'')
+
+		#invoice.printInvoice()
+		#exit()
 
 		return invoice
+
+	
+
+
+
 
 	#Identifier: whitecap.com
 	#HD Supply Construction
@@ -683,7 +772,7 @@ class Invoices:
 	'bazzillengraving.com' : bazzille,
 	'BSE Invoice': border_state_electric,
 	'602-431-0068' : first_cut,
-	'GLENDALE': glendale_industrial,
+	'UNICOA': glendale_industrial,
 	'graybar.com' : graybar,
 	'whitecap.com' : white_cap,
 	'us.hilti.com' : hilti, 

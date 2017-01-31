@@ -5,7 +5,8 @@ import StringIO
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter
 import sys
-
+reload(sys)  
+sys.setdefaultencoding('utf8')
 
 #Custom Libraries
 from inv import *
@@ -29,12 +30,11 @@ def main():
 	count = 0;
 
 	for page in range(pdf_count):
-
-		print "About to load " + str(page)
+		print "About to load " + str(page+1),
 		try:
 			pdf.load(page)
 		except:
-			print "ERROR: Couldn't load page " + str(page)
+			print "ERROR: Couldn't load page " + str(page+1)
 			invoices.addNonInvoicePage(); 
 			continue
 
@@ -56,12 +56,15 @@ def main():
 				break;
 		if(not foundPage):
 			invoices.addNonInvoicePage();
+			print ""
 			
 	printToPDF(pdf_name,invoices)
 
 
 
-def printToPDF(pdf_name,invoices):
+
+
+def printToPDF_old(pdf_name,invoices):
 	# read your existing PDF
 	existing_pdf = PdfFileReader(file(pdf_name, "rb"))
 	output_file = pdf_name + ".watermarked.pdf"
@@ -74,24 +77,27 @@ def printToPDF(pdf_name,invoices):
 	print "Page_count = " + str(page_count);
 	print "Invoice Count=" + str(len(invoices));
 
-
+	incomplete_watermarks = {}
 
 	for p in range(page_count):
-		packet = StringIO.StringIO()
-		# create a new PDF with Reportlab
-	
-		invoice_string = job_string = po_string = ""
-
+		
 		invoice = invoices[p];
 
 		#Blank Invoice
 		if(invoice == None):
+			incomplete_watermarks[p] = invoice;
 			page = existing_pdf.getPage(p)
 			output.addPage(page)
 			print "adding a non invoice page" + str(p)
-			continue;
-		
 
+			continue;
+
+		#if(not invoice.allFieldsAreFull()):
+		#	incomplete_watermarks{p} = invoice;
+		
+		packet = StringIO.StringIO()
+		# create a new PDF with Reportlab
+	
 
 		invoice.cleanInvoice()
 		invoice_string = str(invoice.num)
@@ -151,6 +157,131 @@ def printToPDF(pdf_name,invoices):
 	outputStream.close()
 	print "PRINTED TO "+ output_file
 	print 'success'
+
+#Pass in invoice, and current page
+def getWaterMarkedPage(invoice,page):
+
+	invoice_string = ''
+	job_string = ''
+	po_string = ''
+
+	if(invoice != None):
+		invoice.cleanInvoice()
+		if(invoice.num == None):
+			invoice_string = ""
+		else:
+			invoice_string = str(invoice.num)
+		if(invoice.job == None):
+			invoice.job = ""
+		else:
+			job_string = str(invoice.job)
+		if(invoice.po == None):
+			invoice.po = ""
+		else:
+			po_string = str(invoice.po)
+	
+		
+
+	packet = StringIO.StringIO()
+	can = canvas.Canvas(packet, pagesize=letter)
+	#can.rect(x-20, y_min-20, 400, 100)
+	x=150
+	#x_max = 300
+	y_min = 150
+	y_max = 190
+
+	y_stack = [y_max]
+
+	if(len(invoice_string) < 50):
+		last_y = y_stack[-1]
+		y_stack.append(last_y - 20)
+		can.drawString(x, last_y,		"INVOICE#: " + invoice_string)
+
+
+	if(len(job_string) < 50):
+		last_y = y_stack[-1]
+		y_stack.append(last_y - 20)
+		can.drawString(x, last_y,		"JOB        #: " + job_string)
+	else:
+		while len(job_string) > 0:
+			last_y = y_stack[-1]
+			y_stack.append(last_y - 20)
+			can.drawString(x, last_y,	"JOB        #: " + job_string[0:50])
+			job_string = job_string[50:]
+		
+	if(len(po_string) < 50):
+		last_y = y_stack[-1]
+		y_stack.append(last_y - 20)
+		can.drawString(x, last_y,		"PO         #: " + po_string)
+
+	width = 400
+	height = 400
+	#Shift pixels based on how many extra lines were added
+	pixelShift = (len(y_stack) - 3) * 9
+	can.rect(x-10,y_max-60 - pixelShift,width,100+pixelShift)
+
+	can.save()
+
+	packet.seek(0)
+
+	watermark = PdfFileReader(packet);
+	
+	page.mergePage(watermark.getPage(0))
+
+	return  page;
+		
+		
+
+
+
+#missing the PO or Job
+
+
+def printToPDF(pdf_name,invoices):
+	# read your existing PDF
+	existing_pdf = PdfFileReader(file(pdf_name, "rb"))
+	output_file = pdf_name + ".watermarked.pdf"
+	invoices = invoices.getInvoices()
+	# Number of pages in input document
+	page_count = existing_pdf.getNumPages()
+
+	#PDF output
+	outputPDF = PdfFileWriter()
+
+	incomplete_pages = []
+	for p in range(page_count):
+		
+
+		invoice = invoices[p];
+		if(invoice != None):
+			complete_flag = invoice.setCompletionFlag()
+		else:
+			complete_flag = False
+		#CHECK TO SEE IF PAGE IS BROKEN
+
+		#Create a watermarked version of the page
+		watermarked_page = getWaterMarkedPage(invoice,existing_pdf.getPage(p))
+		
+		if(complete_flag == True):
+			outputPDF.addPage(watermarked_page)	
+			print "Added COMPLETE PDF page # " + str(p + 1) 
+		else:
+			incomplete_pages.append([watermarked_page,p])
+
+	#Add incomplete pages
+	for page in incomplete_pages:
+		outputPDF.addPage(page[0]);
+		print "Added [missing PO or JOB#] PDF page # " + str(page[1] + 1) 
+	
+
+	# finally, write "output" to a real file
+	#new_pdf = PdfFileReader(packet)
+	
+	outputStream = file(output_file, "wb")
+	outputPDF.write(outputStream)
+	outputStream.close()
+	print "success: printed PDF to "+ output_file
+
 
 
 

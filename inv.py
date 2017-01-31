@@ -1,10 +1,6 @@
 #!/usr/bin/env python
 import re
 
-#import textwrap
-
-
-
 
 class Invoice:
 	complete = False;

@@ -52,7 +52,7 @@ class Application:
       
         #Files
         self.outfile = "none"
-        self.log = pwd  + "/log.txt"
+        self.log = ""
 
 
         self.pdfFilePathLabel = Label(frame,textvariable=self.pdf_in_filepath).grid(row=0,column=1)
@@ -125,6 +125,7 @@ class Application:
         if(not filename.endswith(".pdf")):
             self.pdf_in_filepath.set("That's not a PDF!")
         elif(len(filename) > 1):
+            self.log = str(filename) + ".log.txt"
             self.pdf_in_filepath.set("Selected Filepath:"  + str(filename))
             self.outfile =  os.path.dirname(filename) + "/" +  str(os.path.basename(filename) + ".watermarked.pdf"  ) 
             self.pdf_out_filepath.set("Output File: " + self.outfile )

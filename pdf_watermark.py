@@ -97,6 +97,8 @@ def getWaterMarkedPage(invoice,page):
 
 	packet = StringIO.StringIO()
 	can = canvas.Canvas(packet, pagesize=letter)
+	can.setStrokeColor('red')
+	can.setFillColorRGB(1,0,0)
 	#can.rect(x-20, y_min-20, 400, 100)
 	x=150
 	#x_max = 300

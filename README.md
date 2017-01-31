@@ -14,6 +14,9 @@
 # Install VC Python
 * http://aka.ms/vcpython27
 
+# INSTALL
+Run install.bat  or follow the instructions below
+
 # Install LXML
 Open CMD window
 

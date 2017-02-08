@@ -3,6 +3,7 @@ import re
 
 
 class Invoice:
+	unknown_invoice = False;
 	complete = False;
 	page = None;
 	num = None;
@@ -76,8 +77,10 @@ class Invoices:
 	invoices = []
 
 
-	def addNonInvoicePage(__self__):
+	def addUnknownInvoicePage(__self__):
 		i = Invoice()
+		i.unknown_invoice = True;
+
 		__self__.invoices.append(i);
 
 	def add(__self__,page,invoice):
@@ -101,11 +104,6 @@ class Invoices:
 		#Get Purchase Order PO#
 		po_string = 'PURCHASE ORDER NUMBER'
 		pdf_id =  pdf.pq('LTTextLineHorizontal:contains("'+str(po_string)+'")')
-		#x0 = float(pdf_id.attr('x0')) #Left X
-		#y0 = float(pdf_id.attr('y0')) #Lower Y
-		#x1 = float(pdf_id.attr('x1')) #Right X
-		#y1 = float(pdf_id.attr('y1')) #Upper Y
-		#print (x0,y0,x1,y1);
 
 		if(pdf_id):
 			left_corner = float(pdf_id.attr('x0'))
@@ -115,13 +113,10 @@ class Invoices:
 			invoice.po  = pdf.pq('LTTextLineHorizontal:overlaps_bbox("%s, %s, %s, %s")' % (366, 534, 451, 541)).text()
 	
 		
-		#pdf_id = pdf.pq('LTTextLineHorizontal:contains("'+str('RELEASE NUMBER')+'")') 
-		#x0 = float(pdf_id.attr('x0')) #Left X
-		#y0 = float(pdf_id.attr('y0')) #Lower Y
-		#x1 = float(pdf_id.attr('x1')) #Right X
-		#y1 = float(pdf_id.attr('y1')) #Upper Y
-		#print(x0,y0,x1,y1)
-		#invoice.job  = pdf.pq('LTTextLineHorizontal:overlaps_bbox("%s, %s, %s, %s")' % (400,0,1000,1000)).text()
+	
+		invoice.job  = pdf.pq('LTTextLineHorizontal:overlaps_bbox("%s, %s, %s, %s")' % (515, 524, 548, 532)).text()
+		invoice.job = invoice.job.replace("RELEASE","");
+		invoice.job = invoice.job.replace("NUMBER","");
 		return invoice
 
 	def wesco(invoice,pdf):

@@ -11,7 +11,7 @@ sys.setdefaultencoding('utf8')
 #Custom Libraries
 from inv import *
 
-print "Check Logfile"
+
 
 
 def main():
@@ -19,6 +19,7 @@ def main():
 	if len(sys.argv) >= 2:
 		pdf_name = sys.argv[1]
 		log_name = pdf_name + ".log.txt"
+		print "Check Logfile (" + log_name + ")"
 		sys.stdout = open(log_name, 'w')
 		print "About to open " + str(pdf_name)
 		sys.stdout.flush()
@@ -42,7 +43,7 @@ def main():
 		except:
 			print "ERROR: Couldn't load page " + str(page+1)
 			sys.stdout.flush()
-			invoices.addNonInvoicePage(); 
+			invoices.addUnknownInvoicePage(); 
 			continue
 
 		identifiers = invoices.getIdentifiers();
@@ -62,7 +63,7 @@ def main():
 				foundPage = True;
 				break;
 		if(not foundPage):
-			invoices.addNonInvoicePage();
+			invoices.addUnknownInvoicePage();
 			print ""
 			
 	printToPDF(pdf_name,invoices)
@@ -164,8 +165,8 @@ def printToPDF(pdf_name,invoices):
 	outputPDF = PdfFileWriter()
 
 	incomplete_pages = []
+	actual_page = 1;
 	for p in range(page_count):
-		
 
 		invoice = invoices[p];
 		if(invoice != None):
@@ -180,20 +181,26 @@ def printToPDF(pdf_name,invoices):
 		#Print the page with the PDF
 		if(complete_flag == True):
 			outputPDF.addPage(watermarked_page)	
-			print "Added COMPLETE PDF page # " + str(p + 1)	
+			print "Added COMPLETE PDF page # " + str(p + 1)	+ " (Page " + str(actual_page) + ")"
+			actual_page+=1;
+
 		#Don't move pages that don't have invoice, assume they are placeholder pages
-		elif(complete_flag == False and invoice != None):
+		elif(complete_flag == False and invoice.unknown_invoice == True):
 			outputPDF.addPage(watermarked_page)	
-			print "Added NON INVOICE PDF page # " + str(p + 1)
+			print "Added NON INVOICE PDF page # " + str(p + 1)+" (Page " + str(actual_page) + ")"
+			actual_page+=1;
 		#Save the PDF page for printing later	
 		else:
 			incomplete_pages.append([watermarked_page,p])
 		sys.stdout.flush()
 
+
 	#Add incomplete pages
+
 	for page in incomplete_pages:
 		outputPDF.addPage(page[0]);
-		print "Added [missing PO or JOB#] PDF page # " + str(page[1] + 1) 
+		print "Added [missing PO or JOB#] PDF page # " + str(page[1] + 1) + " (Page " + str(actual_page) + ")"
+		actual_page+=1;	
 		sys.stdout.flush()
 	
 

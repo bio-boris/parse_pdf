@@ -220,6 +220,14 @@ class Invoices:
 		invoice.po = invoice.po.lstrip();
 
 
+		invoice.job  = pdf.pq('LTTextLineHorizontal:overlaps_bbox("%s, %s, %s, %s")' % (300, 516, 350, 527	)).text()
+		invoice.job = invoice.job.replace("JOB NAME",'')
+		invoice.job = invoice.job.replace("JOBNAME",'')
+		
+
+
+
+
 		return invoice
 
 	#Consolidated Electrical Distributors
@@ -500,32 +508,40 @@ class Invoices:
 	def hilti(invoice,pdf):
 		#INVOICE
 		pdf_id = pdf.pq('LTTextLineHorizontal:contains("'+str('INVOICE NUMBER')+'")') 
-		x0 = float(pdf_id.attr('x0')) #Left X
-		y0 = float(pdf_id.attr('y0')) #Lower Y
-		x1 = float(pdf_id.attr('x1')) #Right X
-		y1 = float(pdf_id.attr('y1')) #Upper Y
-		invoice.num  = pdf.pq('LTTextLineHorizontal:in_bbox("%s, %s, %s, %s")' % (x1,y0-1,x1+200,y1+1)).text()
-		invoice.num = invoice.num.replace("INVOICE NUMBER:",'')
-		invoice.num = re.sub(r'\W+', "", invoice.num)
+		if(not pdf_id):
+			pdf_id = pdf.pq('LTTextLineHorizontal:contains("'+str('Invoice No')+'")') 
+		if(pdf_id):
+			x0 = float(pdf_id.attr('x0')) #Left X
+			y0 = float(pdf_id.attr('y0')) #Lower Y
+			x1 = float(pdf_id.attr('x1')) #Right X
+			y1 = float(pdf_id.attr('y1')) #Upper Y
+			invoice.num  = pdf.pq('LTTextLineHorizontal:in_bbox("%s, %s, %s, %s")' % (x1,y0-1,x1+200,y1+1)).text()
+			invoice.num = invoice.num.replace("INVOICE NUMBER:",'')
+			invoice.num = re.sub(r'\W+', "", invoice.num)
+			
+		
 
 
 		#PO
+
 		pdf_id = pdf.pq('LTTextLineHorizontal:contains("'+str('CUSTOMER P.O. NUMBER')+'")') 
-		x0 = float(pdf_id.attr('x0')) #Left X
-		y0 = float(pdf_id.attr('y0')) #Lower Y
-		x1 = float(pdf_id.attr('x1')) #Right X
-		y1 = float(pdf_id.attr('y1')) #Upper Y
-		invoice.po  = pdf.pq('LTTextLineHorizontal:in_bbox("%s, %s, %s, %s")' % (x0-1,y0-15,x1+200,y1)).text()
-		invoice.po = invoice.po.replace("CUSTOMER P.O. NUMBER:",'')
-		
+		if(pdf_id):
+			x0 = float(pdf_id.attr('x0')) #Left X
+			y0 = float(pdf_id.attr('y0')) #Lower Y
+			x1 = float(pdf_id.attr('x1')) #Right X
+			y1 = float(pdf_id.attr('y1')) #Upper Y
+			invoice.po  = pdf.pq('LTTextLineHorizontal:in_bbox("%s, %s, %s, %s")' % (x0-1,y0-15,x1+200,y1)).text()
+			invoice.po = invoice.po.replace("CUSTOMER P.O. NUMBER:",'')
+			
 
 		#JOB
-		pdf_id = pdf.pq('LTTextLineHorizontal:contains("'+str('FEDERAL ID:')+'")') 
-		x0 = float(pdf_id.attr('x0')) #Left X
-		y0 = float(pdf_id.attr('y0')) #Lower Y
-		x1 = float(pdf_id.attr('x1')) #Right X
-		y1 = float(pdf_id.attr('y1')) #Upper Y
-		invoice.job  = pdf.pq('LTTextLineHorizontal:in_bbox("%s, %s, %s, %s")' % (x0-100,y0-100,x1,y0)).text()
+		if(pdf_id):
+			pdf_id = pdf.pq('LTTextLineHorizontal:contains("'+str('FEDERAL ID:')+'")') 
+			x0 = float(pdf_id.attr('x0')) #Left X
+			y0 = float(pdf_id.attr('y0')) #Lower Y
+			x1 = float(pdf_id.attr('x1')) #Right X
+			y1 = float(pdf_id.attr('y1')) #Upper Y
+			invoice.job  = pdf.pq('LTTextLineHorizontal:in_bbox("%s, %s, %s, %s")' % (x0-100,y0-100,x1,y0)).text()
 		
 		return invoice
 
@@ -760,6 +776,7 @@ class Invoices:
 	'apacherentals.com': apache_rentals,
 	'fishertools.com' : fisher_tools,
 	'CED-PHOENIX': arizona_electric,
+	'6022585411':arizona_electric,
 	'CED - PHOENIX': ced,
 	'www.cesco.com': crescent,
 	'iesupply.billtrust.com': ies_supply,

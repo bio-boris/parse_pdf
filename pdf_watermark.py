@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import pdfquery
-from pyPdf import PdfFileWriter, PdfFileReader
+from PyPDF2 import PdfFileWriter, PdfFileReader
 import StringIO
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter
@@ -18,9 +18,10 @@ def main():
 	#1. Loads up the PDF and gets the number of pages
 	if len(sys.argv) >= 2:
 		pdf_name = sys.argv[1]
-		log_name = pdf_name + ".log.txt"
-		print "Check Logfile (" + log_name + ")"
-		sys.stdout = open(log_name, 'w')
+		if len(sys.argv) > 2:
+			log_name = pdf_name + ".log.txt"
+			print "Check Logfile (" + log_name + ")"
+			sys.stdout = open(log_name, 'w')
 		print "About to open " + str(pdf_name)
 		sys.stdout.flush()
 	else:
@@ -97,6 +98,7 @@ def getWaterMarkedPage(invoice,page):
 		
 
 	packet = StringIO.StringIO()
+	##
 	can = canvas.Canvas(packet, pagesize=letter)
 	can.setStrokeColor('red')
 	can.setFillColorRGB(1,0,0)
@@ -128,22 +130,33 @@ def getWaterMarkedPage(invoice,page):
 	if(len(po_string) < 50):
 		last_y = y_stack[-1]
 		y_stack.append(last_y - 20)
-		can.drawString(x, last_y,		"PO         #: " + po_string)
+		
 
 	width = 400
 	height = 400
 	#Shift pixels based on how many extra lines were added
 	pixelShift = (len(y_stack) - 3) * 9
+	
 	can.rect(x-10,y_max-60 - pixelShift,width,100+pixelShift)
+	str1 = str(x-10)
+	str2 = str(y_max-60)
+
+	can.drawString(x+50,y_max+50,"X:{0} Y:{1}".format(str1,str2));
+
 
 	can.save()
 
 	packet.seek(0)
 
-	watermark = PdfFileReader(packet);
-	
-	page.mergePage(watermark.getPage(0))
+	watermark = PdfFileReader(packet)
+	pp=watermark.getPage(0)
 
+	rotation = page['/Rotate']
+	if(rotation!=0):
+		page.mergeRotatedTranslatedPage(pp, rotation, pp.mediaBox.getWidth()/2, pp.mediaBox.getWidth()/2)
+	else:
+		page.mergePage(pp)
+	
 	return  page;
 		
 		
@@ -211,6 +224,87 @@ def printToPDF(pdf_name,invoices):
 	outputPDF.write(outputStream)
 	outputStream.close()
 	print "success: printed PDF to "+ output_file
+
+
+
+
+def printToPDF_multiple(pdf_name,invoices):
+	# read your existing PDF
+	existing_pdf = PdfFileReader(file(pdf_name, "rb"))
+	output_file = pdf_name + ".watermarked.pdf"
+	output_file_incomplete = pdf_name + ".watermarked.incomplete.pdf"
+	output_file_missing = pdf_name + ".watermarked.missing.pdf"
+
+	invoices = invoices.getInvoices()
+	# Number of pages in input document
+	page_count = existing_pdf.getNumPages()
+
+	#PDF output
+	outputPDF = PdfFileWriter()
+	outputPDF_incomplete = PdfFileWriter()
+	outputPDF_missing = PdfFileWriter()
+
+
+	incomplete_pages = []
+	actual_page = 1;
+	for p in range(page_count):
+
+		invoice = invoices[p];
+		if(invoice != None):
+			complete_flag = invoice.setCompletionFlag()
+		else:
+			complete_flag = False
+		#CHECK TO SEE IF PAGE IS BROKEN
+
+		#Create a watermarked version of the page
+		watermarked_page = getWaterMarkedPage(invoice,existing_pdf.getPage(p))
+		
+		#Print the page with the PDF
+		if(complete_flag == True):
+			outputPDF.addPage(watermarked_page)	
+			print "Added COMPLETE PDF page # " + str(p + 1)	+ " (Page " + str(actual_page) + ")"
+			actual_page+=1;
+
+		#Don't move pages that don't have invoice, assume they are placeholder pages
+		elif(complete_flag == False and invoice.unknown_invoice == True):
+			outputPDF_missing.addPage(watermarked_page)	
+			print "Added NON INVOICE PDF page # " + str(p + 1)+" (Page " + str(actual_page) + ")"
+			actual_page+=1;
+		#Save the PDF page for printing later	
+		else:
+			incomplete_pages.append([watermarked_page,p])
+		sys.stdout.flush()
+
+
+	#Add incomplete pages
+
+	for page in incomplete_pages:
+		outputPDF_incomplete.addPage(page[0]);
+		print "Added [missing PO or JOB#] PDF page # " + str(page[1] + 1) + " (Page " + str(actual_page) + ")"
+		actual_page+=1;	
+		sys.stdout.flush()
+	
+
+	# finally, write "output" to a real file
+	#new_pdf = PdfFileReader(packet)
+	
+	outputStream = file(output_file, "wb")
+	outputPDF.write(outputStream)
+	outputStream.close()
+	print "success: printed PDF to "+ output_file
+
+
+	outputStream = file(output_file_incomplete, "wb")
+	outputPDF_incomplete.write(outputStream)
+	outputStream.close()
+	print "success: printed PDF to "+ output_file_incomplete
+
+
+	outputStream = file(output_file_missing, "wb")
+	outputPDF_missing.write(outputStream)
+	outputStream.close()
+	print "success: printed PDF to "+ output_file_missing
+	
 
 
 

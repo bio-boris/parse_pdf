@@ -104,42 +104,48 @@ def getWaterMarkedPage(invoice,page):
 	can = canvas.Canvas(packet, pagesize=letter)
 	can.setStrokeColor('red')
 	can.setFillColorRGB(1,0,0)
+	can.setLineWidth(5)
+
+
+	can.setFont('Helvetica-Bold', 16)
+
 	#can.rect(x-20, y_min-20, 400, 100)
-	x=150
+	x=80
 	#x_max = 300
-	y_min = 150
-	y_max = 190
+	y_min = 375
+	y_max = y_min + 60
+	text_space = 30
 
 	y_stack = [y_max]
 
 	if(len(invoice_string) < 50):
 		last_y = y_stack[-1]
-		y_stack.append(last_y - 20)
-		can.drawString(x, last_y,		"INVOICE#: " + invoice_string)
+		y_stack.append(last_y - text_space)
+		can.drawString(x, last_y,		"INVOICE #: " + invoice_string)
 
 
 	if(len(job_string) < 50):
 		last_y = y_stack[-1]
-		y_stack.append(last_y - 20)
+		y_stack.append(last_y - text_space)
 		can.drawString(x, last_y,		"JOB        #: " + job_string)
 	else:
 		while len(job_string) > 0:
 			last_y = y_stack[-1]
-			y_stack.append(last_y - 20)
+			y_stack.append(last_y - text_space)
 			can.drawString(x, last_y,	"JOB        #: " + job_string[0:50])
 			job_string = job_string[50:]
 		
 	if(len(po_string) < 50):
 		last_y = y_stack[-1]
-		y_stack.append(last_y - 20)
-		can.drawString(x, last_y,		"PO         #: " + po_string)	
+		y_stack.append(last_y - text_space)
+		can.drawString(x, last_y,		"PO          #: " + po_string)	
 
 	width = 400
-	height = 400
+	#height = 500
 	#Shift pixels based on how many extra lines were added
 	pixelShift = (len(y_stack) - 3) * 9
 	
-	can.rect(x-10,y_max-60 - pixelShift,width,100+pixelShift)
+	can.rect(x-10,y_max-80 - pixelShift,width,120+pixelShift)
 	#str1 = str(x-10)
 	#str2 = str(y_max-60)
 	#can.drawString(x+50,y_max+50,"X:{0} Y:{1}".format(str1,str2));
@@ -152,7 +158,10 @@ def getWaterMarkedPage(invoice,page):
 	watermark = PdfFileReader(packet,strict=False)
 	pp=watermark.getPage(0)
 
-	rotation = page['/Rotate']
+	try:
+		rotation = page['/Rotate']
+	except:
+		rotation = 0
 	if(rotation!=0):
 		page.mergeRotatedTranslatedPage(pp, rotation, pp.mediaBox.getWidth()/2, pp.mediaBox.getWidth()/2)
 	else:

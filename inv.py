@@ -156,8 +156,11 @@ class Invoices:
 			invoice.po = invoice.po.replace(po_string,'')
 			invoice.po = invoice.po.replace(' ','')
 
+		invoice.job = invoice.po
+
 		#JOB
-		invoice.job  = pdf.pq('LTTextLineHorizontal:in_bbox("%s, %s, %s, %s")' % (450, 645, 600, 656)).text()
+
+		#invoice.job  = pdf.pq('LTTextLineHorizontal:in_bbox("%s, %s, %s, %s")' % (450, 645, 600, 656)).text()
 
 
 
@@ -259,13 +262,22 @@ class Invoices:
 		invoice.po  = pdf.pq('LTTextLineHorizontal:overlaps_bbox("%s, %s, %s, %s")' % (x0,y0,x1,y1+5)).text()
 		invoice.po = invoice.po.replace("SHIP VIA",'')
 
-		invoice.job  = pdf.pq('LTTextLineHorizontal:overlaps_bbox("%s, %s, %s, %s")' % (480, 593.305-10, 520, 603)).text()
+		pdf_id = pdf.pq('LTTextLineHorizontal:contains("'+str('REFERENCE')+'")')
+		x0 = float(pdf_id.attr('x0')) #Left X
+		y0 = float(pdf_id.attr('y0')) #Lower Y
+		x1 = float(pdf_id.attr('x1')) #Right X
+		y1 = float(pdf_id.attr('y1')) #Upper Y
+		
+		invoice.job  = pdf.pq('LTTextLineHorizontal:overlaps_bbox("%s, %s, %s, %s")' % (x0-10,y0-10,x1,y1)).text()
 		invoice.job = invoice.job.replace("REFERENCE",'')
 
-		if(not invoice.job):
-			invoice.job  = pdf.pq('LTTextLineHorizontal:overlaps_bbox("%s, %s, %s, %s")' % (400, 693, 440, 704)).text()
-			invoice.job = invoice.job.replace("JOB",'')
-			invoice.job = invoice.job.replace("NAME",'')
+
+
+
+		#if(not invoice.job):
+		#	invoice.job  = pdf.pq('LTTextLineHorizontal:in_bbox("%s, %s, %s, %s")' % (400, 693, 440, 704)).text()
+		#	invoice.job = invoice.job.replace("JOB",'')
+		#	invoice.job = invoice.job.replace("NAME",'')
 		
 
 		return invoice
@@ -452,7 +464,7 @@ class Invoices:
 			y1 = float(pdf_id.attr('y1')) #Upper Y
 			invoice.job  = pdf.pq('LTTextLineHorizontal:in_bbox("%s, %s, %s, %s")' % (x0,y0,x1+200,y1)).text()
 			invoice.job= invoice.job.replace("Rt.",'')
-			invoice.job= invoice.job.replace("TO",'')
+			invoice.job= invoice.job.replace("To",'')
 
 		#invoice.printInvoice()
 		#exit()

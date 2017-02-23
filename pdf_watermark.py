@@ -39,6 +39,7 @@ def main():
 	count = 0;
 
 	for page in range(pdf_count):
+		
 		print "About to load " + str(page+1),
 		sys.stdout.flush()
 		try:

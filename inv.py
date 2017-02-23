@@ -663,11 +663,9 @@ class Invoices:
 		invoice.po = invoice.po.replace(".",'')
 
 		#JOB
-		pdf_id = pdf.pq('LTTextLineHorizontal:contains("'+str('job No')+'")') 
-		x0 = float(pdf_id.attr('x0')) #Left X
-		y0 = float(pdf_id.attr('y0')) #Lower Y
-		x1 = float(pdf_id.attr('x1')) #Right X
-		y1 = float(pdf_id.attr('y1')) #Upper Y
+		pdf_id = pdf.pq('LTTextLineHorizontal:contains("'+str('job No')+'")')
+		if(not pdf_id): 
+			pdf_id = pdf.pq('LTTextLineHorizontal:contains("'+str('Job No')+'")')	
 
 		invoice.job  = pdf.pq('LTTextLineHorizontal:in_bbox("%s, %s, %s, %s")' % (x1+1,y0-1,x1+200,y1+1)).text()
 		invoice.job = invoice.job.replace(".",'')

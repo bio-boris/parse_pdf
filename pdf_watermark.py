@@ -39,7 +39,7 @@ def main():
 	count = 0;
 
 	for page in range(pdf_count):
-		
+
 		print "About to load " + str(page+1),
 		sys.stdout.flush()
 		try:
@@ -117,15 +117,17 @@ def getWaterMarkedPage(invoice,page):
 	y_max = y_min + 60
 	text_space = 30
 
+	string_max_len = 34
+
 	y_stack = [y_max]
 
-	if(len(invoice_string) < 50):
+	if(len(invoice_string) < string_max_len):
 		last_y = y_stack[-1]
 		y_stack.append(last_y - text_space)
 		can.drawString(x, last_y,		"INVOICE #: " + invoice_string)
 
 
-	if(len(job_string) < 50):
+	if(len(job_string) < string_max_len):
 		last_y = y_stack[-1]
 		y_stack.append(last_y - text_space)
 		can.drawString(x, last_y,		"JOB        #: " + job_string)
@@ -133,10 +135,10 @@ def getWaterMarkedPage(invoice,page):
 		while len(job_string) > 0:
 			last_y = y_stack[-1]
 			y_stack.append(last_y - text_space)
-			can.drawString(x, last_y,	"JOB        #: " + job_string[0:50])
-			job_string = job_string[50:]
+			can.drawString(x, last_y,	"JOB        #: " + job_string[0:string_max_len])
+			job_string = job_string[string_max_len:]
 		
-	if(len(po_string) < 50):
+	if(len(po_string) < string_max_len):
 		last_y = y_stack[-1]
 		y_stack.append(last_y - text_space)
 		can.drawString(x, last_y,		"PO          #: " + po_string)	
@@ -146,7 +148,7 @@ def getWaterMarkedPage(invoice,page):
 	#Shift pixels based on how many extra lines were added
 	pixelShift = (len(y_stack) - 3) * 9
 	
-	can.rect(x-10,y_max-80 - pixelShift,width,120+pixelShift)
+	can.rect(x-10,y_max-80 - pixelShift,width+5,120+pixelShift)
 	#str1 = str(x-10)
 	#str2 = str(y_max-60)
 	#can.drawString(x+50,y_max+50,"X:{0} Y:{1}".format(str1,str2));

@@ -39,6 +39,7 @@ def main():
 	count = 0;
 
 	for page in range(pdf_count):
+		
 
 		print "About to load " + str(page+1),
 		sys.stdout.flush()
@@ -146,9 +147,9 @@ def getWaterMarkedPage(invoice,page):
 	width = 400
 	#height = 500
 	#Shift pixels based on how many extra lines were added
-	pixelShift = (len(y_stack) - 3) * 9
+	pixelShift = (len(y_stack) - 3) * 15
 	
-	can.rect(x-10,y_max-80 - pixelShift,width+5,120+pixelShift)
+	can.rect(x-10,y_max-80 - pixelShift,width+20,120+pixelShift)
 	#str1 = str(x-10)
 	#str2 = str(y_max-60)
 	#can.drawString(x+50,y_max+50,"X:{0} Y:{1}".format(str1,str2));

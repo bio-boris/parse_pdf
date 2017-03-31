@@ -111,9 +111,9 @@ class Invoices:
 			invoice.po  = pdf.pq('LTTextLineHorizontal:in_bbox("%s, %s, %s, %s")' % (left_corner, bottom_corner-15, left_corner+150, bottom_corner)).text()
 		else:
 			invoice.po  = pdf.pq('LTTextLineHorizontal:overlaps_bbox("%s, %s, %s, %s")' % (366, 534, 451, 541)).text()
-	
-		
-	
+
+
+
 		invoice.job  = pdf.pq('LTTextLineHorizontal:overlaps_bbox("%s, %s, %s, %s")' % (515, 524, 548, 532)).text()
 		invoice.job = invoice.job.replace("RELEASE","");
 		invoice.job = invoice.job.replace("NUMBER","");
@@ -130,7 +130,7 @@ class Invoices:
 			invoice.job  = pdf.pq('LTTextLineHorizontal:overlaps_bbox("%s, %s, %s, %s")' % (315, 590, 400, 628)).text()
 			if(invoice.job == ''):
 				invoice.job  = pdf.pq('LTTextLineHorizontal:overlaps_bbox("%s, %s, %s, %s")' % (315, 550, 400, 628)).text()
-			
+
 
 		else:
 			invoice.job = ''
@@ -221,7 +221,7 @@ class Invoices:
 		invoice.job  = pdf.pq('LTTextLineHorizontal:overlaps_bbox("%s, %s, %s, %s")' % (300, 516, 350, 527	)).text()
 		invoice.job = invoice.job.replace("JOB NAME",'')
 		invoice.job = invoice.job.replace("JOBNAME",'')
-		
+
 
 
 
@@ -248,10 +248,10 @@ class Invoices:
 	#CED PHOENIX
 	#CREDIT STATEMENT
 	def ced(invoice,pdf):
-		#INVOICE 
+		#INVOICE
 		invoice_string = "INVOICE NO."
 
-		
+
 		pdf_id =  pdf.pq('LTTextLineHorizontal:contains("'+str(invoice_string)+'")')
 
 		if not pdf_id:
@@ -272,7 +272,7 @@ class Invoices:
 		invoice.num = invoice.num.replace("NO","")
 		invoice.num = invoice.num.replace(".","")
 
-		#JOB 
+		#JOB
 		job_string = "JOB NAME"
 		pdf_id =  pdf.pq('LTTextLineHorizontal:contains("'+str(job_string)+'")')
 		x0 = float(pdf_id.attr('x0')) #Left X
@@ -298,11 +298,11 @@ class Invoices:
 			invoice.po = invoice.po.replace(".","")
 		else:
 			invoice.po  = pdf.pq('LTTextLineHorizontal:overlaps_bbox("%s, %s, %s, %s")' % (505, 518, 522, 527)).text()
-			
-			
 
 
-		
+
+
+
 
 
 
@@ -316,8 +316,8 @@ class Invoices:
 		invoice.num = re.sub(" .+", "", invoice.num)
 		invoice.num = re.sub(" .+", "", invoice.num)
 
-			
-		pdf_id = pdf.pq('LTTextLineHorizontal:contains("'+str('SHIP VIA')+'")') 
+
+		pdf_id = pdf.pq('LTTextLineHorizontal:contains("'+str('SHIP VIA')+'")')
 		x0 = float(pdf_id.attr('x0')) #Left X
 		y0 = float(pdf_id.attr('y0')) #Lower Y
 		x1 = float(pdf_id.attr('x1')) #Right X
@@ -330,7 +330,7 @@ class Invoices:
 		y0 = float(pdf_id.attr('y0')) #Lower Y
 		x1 = float(pdf_id.attr('x1')) #Right X
 		y1 = float(pdf_id.attr('y1')) #Upper Y
-		
+
 		invoice.job  = pdf.pq('LTTextLineHorizontal:overlaps_bbox("%s, %s, %s, %s")' % (x0-10,y0-10,x1,y1)).text()
 		invoice.job = invoice.job.replace("REFERENCE",'')
 
@@ -341,7 +341,7 @@ class Invoices:
 		#	invoice.job  = pdf.pq('LTTextLineHorizontal:in_bbox("%s, %s, %s, %s")' % (400, 693, 440, 704)).text()
 		#	invoice.job = invoice.job.replace("JOB",'')
 		#	invoice.job = invoice.job.replace("NAME",'')
-		
+
 
 		return invoice
 
@@ -368,18 +368,18 @@ class Invoices:
 		return invoice
 
 	def acme_tool(invoice,pdf):
-		
+
 		invoice.num  = pdf.pq('LTTextLineHorizontal:in_bbox("%s, %s, %s, %s")' % (500, 709, 600, 728)).text()
 		invoice.num = invoice.num.replace(" ",'',1)
 
 		if not invoice.num:
 			invoice.num  = pdf.pq('LTTextLineHorizontal:in_bbox("%s, %s, %s, %s")' % (487.08, 700.872, 560.838, 713.979)).text()
-		 
-	
+
+
 		invoice.po  = pdf.pq('LTTextLineHorizontal:in_bbox("%s, %s, %s, %s")' % (108, 524, 150, 543)).text()
 		if not invoice.po:
 			invoice.po  = pdf.pq('LTTextLineHorizontal:in_bbox("%s, %s, %s, %s")' % (120.24, 526.992, 151.761, 540.099)).text()
-		
+
 
 		# invoice_string = "51294"
 		# pdf_id =  pdf.pq('LTTextLineHorizontal:contains("'+str(invoice_string)+'")')
@@ -387,7 +387,7 @@ class Invoices:
 		# y0 = float(pdf_id.attr('y0')) #Lower Y
 		# x1 = float(pdf_id.attr('x1')) #Right X
 		# y1 = float(pdf_id.attr('y1')) #Upper Y
-		# print(x0,y0,x1,y1)	
+		# print(x0,y0,x1,y1)
 
 
 		return invoice
@@ -395,7 +395,7 @@ class Invoices:
 
 	#www.priority1powerservices.com
 	def priority_one(invoice,pdf):
-		#INVOICE 
+		#INVOICE
 		invoice_string = "Invoice #"
 
 		pdf_id =  pdf.pq('LTTextLineHorizontal:contains("'+str(invoice_string)+'")')
@@ -408,7 +408,7 @@ class Invoices:
 		invoice.num = invoice.num.replace("Invoice#","")
 		invoice.num = invoice.num.replace(".","")
 
-		#JOB 
+		#JOB
 		job_string = "YOUR NO."
 		pdf_id =  pdf.pq('LTTextLineHorizontal:contains("'+str(job_string)+'")')
 		x0 = float(pdf_id.attr('x0')) #Left X
@@ -430,18 +430,18 @@ class Invoices:
 #		invoice.po = invoice.po.replace(po_string,"")
 #		invoice.po = invoice.po.replace(".","")
 
-		return invoice		
+		return invoice
 
 
 	#www.copperstate.com
 	def copper_state(invoice,pdf):
-		#INVOICE 
+		#INVOICE
 		invoice_string = "Invoice"
 		invoice_string2 = "Invoice #"
 		pdf_id =  pdf.pq('LTTextLineHorizontal:contains("'+str(invoice_string)+'")')
 		if(not pdf_id):
 			pdf_id =  pdf.pq('LTTextLineHorizontal:contains("'+str(invoice_string2)+'")')
-			
+
 
 		x0 = float(pdf_id.attr('x0')) #Left X
 		y0 = float(pdf_id.attr('y0')) #Lower Y
@@ -451,7 +451,7 @@ class Invoices:
 		invoice.num = invoice.num.replace("Invoice#","")
 		invoice.num = invoice.num.replace(".","")
 
-		#JOB 
+		#JOB
 		job_string = "Reference #"
 		pdf_id =  pdf.pq('LTTextLineHorizontal:contains("'+str(job_string)+'")')
 		x0 = float(pdf_id.attr('x0')) #Left X
@@ -478,26 +478,26 @@ class Invoices:
 
 	#www.Ahern.com
 	def ahern(invoice,pdf):
-		#INVOICE 
+		#INVOICE
 		invoice_string = "Invoice#"
 		invoice_string2 = "Invoice #"
 		pdf_id =  pdf.pq('LTTextLineHorizontal:contains("'+str(invoice_string)+'")')
 		if(not pdf_id):
 			pdf_id =  pdf.pq('LTTextLineHorizontal:contains("'+str(invoice_string2)+'")')
-			
+
 
 		x0 = float(pdf_id.attr('x0')) #Left X
 		y0 = float(pdf_id.attr('y0')) #Lower Y
 		x1 = float(pdf_id.attr('x1')) #Right X
 		y1 = float(pdf_id.attr('y1')) #Upper Y
 		invoice.num  = pdf.pq('LTTextLineHorizontal:in_bbox("%s, %s, %s, %s")' % (x0,y0-1,x1+200,y1+1)).text()
-		
+
 		invoice.num = invoice.num.replace(invoice_string,"")
 		invoice.num = invoice.num.replace(invoice_string2,"")
 
 		invoice.num = invoice.num.replace(".","")
 
-		#JOB 
+		#JOB
 		job_string = "Job #"
 		pdf_id =  pdf.pq('LTTextLineHorizontal:contains("'+str(job_string)+'")')
 		if not pdf_id:
@@ -511,7 +511,7 @@ class Invoices:
 			invoice.job  = pdf.pq('LTTextLineHorizontal:in_bbox("%s, %s, %s, %s")' % (x0,y0-1,x1+200,y1+1)).text()
 			invoice.job = invoice.job.replace(job_string,"")
 			invoice.job = invoice.job.replace(".","")
-		
+
 
 		#PO
 		po_string = "P.O. #"
@@ -520,7 +520,7 @@ class Invoices:
 		if not pdf_id:
 			po_string = "P O."
 			pdf_id =  pdf.pq('LTTextLineHorizontal:contains("'+str(po_string)+'")')
-		
+
 		if pdf_id:
 			x0 = float(pdf_id.attr('x0')) #Left X
 			y0 = float(pdf_id.attr('y0')) #Lower Y
@@ -529,12 +529,12 @@ class Invoices:
 			invoice.po  = pdf.pq('LTTextLineHorizontal:in_bbox("%s, %s, %s, %s")' % (x0,y0-1,x1+200,y1+1)).text()
 			invoice.po = invoice.po.replace(po_string,"")
 			invoice.po = invoice.po.replace(".","")
-		
+
 
 		return invoice
 
 	def bazzille(invoice,pdf):
-		#INVOICE 
+		#INVOICE
 		invoice.num  = pdf.pq('LTTextLineHorizontal:in_bbox("%s, %s, %s, %s")' % (410, 617, 500, 633)).text()
 		invoice.num = invoice.num.replace("INVOICE","")
 		invoice.num = invoice.num.replace("#","")
@@ -543,7 +543,7 @@ class Invoices:
 
 		#JOB
 		invoice.job  = pdf.pq('LTTextLineHorizontal:in_bbox("%s, %s, %s, %s")' % (240, 522, 290, 537)).text()
-		
+
 		#PO
 		#invoice_string = "2016-03"
 		#pdf_id =  pdf.pq('LTTextLineHorizontal:contains("'+str(invoice_string)+'")')
@@ -592,11 +592,11 @@ class Invoices:
 		if not invoice.num or len(invoice.num) < 2 :
 			invoice.num = pdf.pq('LTTextLineHorizontal:in_bbox("%s, %s, %s, %s")' % (215, 751, 312, 800)).text()
 
-		
+
 
 		#print "Invoice.num is good", invoice.num, len(invoice.num)
 
-		
+
 
 		#PO
 		pdf_id = pdf.pq('LTTextLineHorizontal:contains("'+str("P.O.#")+'")')
@@ -607,7 +607,7 @@ class Invoices:
 			x1 = float(pdf_id.attr('x1')) #Right X
 			y1 = float(pdf_id.attr('y1')) #Upper Y
 			invoice.po = pdf.pq('LTTextLineHorizontal:contains("'+str("P.O.#")+'")').text()
-		else:	
+		else:
 			invoice.po = pdf.pq('LTTextLineHorizontal:in_bbox("%s, %s, %s, %s")' % (270, 735, 320, 747)).text()
 		invoice.po = invoice.po.replace("P.O.#", "")
 		invoice.po = invoice.po.replace(":","")
@@ -616,8 +616,7 @@ class Invoices:
 
 
 		#JOB
-		pdf_id = pdf.pq('LTTextLineHorizontal:contains("'+str("Job name:")+'")')
-
+		pdf_id = pdf.pq('LTTextLineHorizontal:contains("'+"Job name:"+'")')
 
 		if(pdf_id):
 			x0 = float(pdf_id.attr('x0')) #Left X
@@ -625,19 +624,26 @@ class Invoices:
 			x1 = float(pdf_id.attr('x1')) #Right X
 			y1 = float(pdf_id.attr('y1')) #Upper Y
 			invoice.job = pdf.pq('LTTextLineHorizontal:contains("'+str("Job name:")+'")').text()
-		else:	
+		else:
 			invoice.job =  pdf.pq('LTTextLineHorizontal:in_bbox("%s, %s, %s, %s")' % (270, 725, 320, 740)).text()
-		
+
 		invoice.job = invoice.job.replace("Job name", "")
 		invoice.job = invoice.job.replace(":","")
 		invoice.job = invoice.job.replace(" ","",1)
+
+
+		if not invoice.job:
+			invoice.job =  pdf.pq('LTTextLineHorizontal:in_bbox("%s, %s, %s, %s")' % (271.44, 727.946, 292.241, 737.033)).text()
+
+
+
 
 
 		return invoice
 
 	#First Cut Identifier: 602-431-0068
 	def first_cut(invoice,pdf):
-		#pdf_id = pdf.pq('LTTextLineHorizontal:contains("'+str('61111')+'")') 
+		#pdf_id = pdf.pq('LTTextLineHorizontal:contains("'+str('61111')+'")')
 		#x0 = float(pdf_id.attr('x0')) #Left X
 		#y0 = float(pdf_id.attr('y0')) #Lower Y
 		#x1 = float(pdf_id.attr('x1')) #Right X
@@ -646,7 +652,7 @@ class Invoices:
 		invoice.num  = pdf.pq('LTTextLineHorizontal:overlaps_bbox("%s, %s, %s, %s")' % (530, 715, 600, 730)).text()
 		invoice.num = re.sub("[^0-9]", "", invoice.num)
 
-		#pdf_id = pdf.pq('LTTextLineHorizontal:contains("'+str('Job #')+'")') 
+		#pdf_id = pdf.pq('LTTextLineHorizontal:contains("'+str('Job #')+'")')
 		#x0 = float(pdf_id.attr('x0')) #Left X
 		#y0 = float(pdf_id.attr('y0')) #Lower Y
 		#x1 = float(pdf_id.attr('x1')) #Right X
@@ -663,7 +669,7 @@ class Invoices:
 
 	#Identifier:
 	def glendale_industrial(invoice,pdf):
-		pdf_id = pdf.pq('LTTextLineHorizontal:contains("'+str('INVOICE NUMBER')+'")') 
+		pdf_id = pdf.pq('LTTextLineHorizontal:contains("'+str('INVOICE NUMBER')+'")')
 		x0 = float(pdf_id.attr('x0')) #Left X
 		y0 = float(pdf_id.attr('y0')) #Lower Y
 		x1 = float(pdf_id.attr('x1')) #Right X
@@ -672,7 +678,7 @@ class Invoices:
 		invoice.num = invoice.num.replace("INVOICE NUMBER",'')
 
 
-		#pdf_id = pdf.pq('LTTextLineHorizontal:contains("'+str('2015-71')+'")') 
+		#pdf_id = pdf.pq('LTTextLineHorizontal:contains("'+str('2015-71')+'")')
 		#x0 = float(pdf_id.attr('x0')) #Left X
 		#y0 = float(pdf_id.attr('y0')) #Lower Y
 		#x1 = float(pdf_id.attr('x1')) #Right X
@@ -680,8 +686,8 @@ class Invoices:
 		#print(x0,y0,x1,y1)
 		invoice.po  = pdf.pq('LTTextLineHorizontal:overlaps_bbox("%s, %s, %s, %s")' % (335, 537, 390, 557)).text()
 		#invoice.po = invoice.po.replace("CUSTOMER P.O. NO.",'')
-		
-		#pdf_id = pdf.pq('LTTextLineHorizontal:contains("'+str('SHIP')+'")') 
+
+		#pdf_id = pdf.pq('LTTextLineHorizontal:contains("'+str('SHIP')+'")')
 		#x0 = float(pdf_id.attr('x0')) #Left X
 		#y0 = float(pdf_id.attr('y0')) #Lower Y
 		#x1 = float(pdf_id.attr('x1')) #Right X
@@ -694,7 +700,7 @@ class Invoices:
 	#Identifier: graybar.com
 	def graybar(invoice,pdf):
 		#INVOICE
-		pdf_id = pdf.pq('LTTextLineHorizontal:contains("'+str('Invoice No:')+'")') 
+		pdf_id = pdf.pq('LTTextLineHorizontal:contains("'+str('Invoice No:')+'")')
 
 		if(pdf_id.attr('x0')):
 			x0 = float(pdf_id.attr('x0')) #Left X
@@ -705,11 +711,11 @@ class Invoices:
 			invoice.num = invoice.num.replace("Invoice",'')
 			invoice.num = invoice.num.replace("No: ",'')
 			invoice.num = invoice.num.replace("Date: ",'')
-		
-		
+
+
 
 		#PO
-		pdf_id = pdf.pq('LTTextLineHorizontal:contains("'+str('Order No')+'")') 
+		pdf_id = pdf.pq('LTTextLineHorizontal:contains("'+str('Order No')+'")')
 		if pdf_id.attr('x0'):
 			x0 = float(pdf_id.attr('x0')) #Left X
 			y0 = float(pdf_id.attr('y0')) #Lower Y
@@ -722,10 +728,10 @@ class Invoices:
 				invoice.po  = pdf.pq('LTTextLineHorizontal:in_bbox("%s, %s, %s, %s")' % (70, 521, 115, 532)).text()
 		else:
 			invoice.po  = pdf.pq('LTTextLineHorizontal:in_bbox("%s, %s, %s, %s")' % (70, 521, 115, 532)).text()
-			
-	
+
+
 		#JOB
-		pdf_id = pdf.pq('LTTextLineHorizontal:contains("'+str('Rt.')+'")') 
+		pdf_id = pdf.pq('LTTextLineHorizontal:contains("'+str('Rt.')+'")')
 		if( pdf_id.attr('x0')):
 			x0 = float(pdf_id.attr('x0')) #Left X
 			y0 = float(pdf_id.attr('y0')) #Lower Y
@@ -740,7 +746,7 @@ class Invoices:
 
 		return invoice
 
-	
+
 
 
 
@@ -749,7 +755,7 @@ class Invoices:
 	#HD Supply Construction
 	def white_cap(invoice,pdf):
 		#INVOICE
-		pdf_id = pdf.pq('LTTextLineHorizontal:contains("'+str('INVOICE NUMBER')+'")') 
+		pdf_id = pdf.pq('LTTextLineHorizontal:contains("'+str('INVOICE NUMBER')+'")')
 		x0 = float(pdf_id.attr('x0')) #Left X
 		y0 = float(pdf_id.attr('y0')) #Lower Y
 		x1 = float(pdf_id.attr('x1')) #Right X
@@ -760,17 +766,17 @@ class Invoices:
 
 
 		#PO
-		pdf_id = pdf.pq('LTTextLineHorizontal:contains("'+str('CUSTOMER')+'")') 
+		pdf_id = pdf.pq('LTTextLineHorizontal:contains("'+str('CUSTOMER')+'")')
 		x0 = float(pdf_id.attr('x0')) #Left X
 		y0 = float(pdf_id.attr('y0')) #Lower Y
 		x1 = float(pdf_id.attr('x1')) #Right X
 		y1 = float(pdf_id.attr('y1')) #Upper Y
 		invoice.po  = pdf.pq('LTTextLineHorizontal:overlaps_bbox("%s, %s, %s, %s")' % (x0-1,y0-10,x1+200,y1)).text()
 		invoice.po = invoice.po.replace("CUSTOMER PO NUMBER",'')
-		
+
 
 		#JOB
-		pdf_id = pdf.pq('LTTextLineHorizontal:contains("'+str('CUSTOMER JOB NO.')+'")') 
+		pdf_id = pdf.pq('LTTextLineHorizontal:contains("'+str('CUSTOMER JOB NO.')+'")')
 		x0 = float(pdf_id.attr('x0')) #Left X
 		y0 = float(pdf_id.attr('y0')) #Lower Y
 		x1 = float(pdf_id.attr('x1')) #Right X
@@ -779,13 +785,13 @@ class Invoices:
 		invoice.job = invoice.job.replace("CUSTOMER JOB NO.",'')
 		invoice.job = re.sub(r'\W+', "", invoice.job)
 		return invoice
-		
+
 	#Identifier: us.hilti.com
 	def hilti(invoice,pdf):
 		#INVOICE
-		pdf_id = pdf.pq('LTTextLineHorizontal:contains("'+str('INVOICE NUMBER')+'")') 
+		pdf_id = pdf.pq('LTTextLineHorizontal:contains("'+str('INVOICE NUMBER')+'")')
 		if(not pdf_id):
-			pdf_id = pdf.pq('LTTextLineHorizontal:contains("'+str('Invoice No')+'")') 
+			pdf_id = pdf.pq('LTTextLineHorizontal:contains("'+str('Invoice No')+'")')
 		if(pdf_id):
 			x0 = float(pdf_id.attr('x0')) #Left X
 			y0 = float(pdf_id.attr('y0')) #Lower Y
@@ -794,13 +800,13 @@ class Invoices:
 			invoice.num  = pdf.pq('LTTextLineHorizontal:in_bbox("%s, %s, %s, %s")' % (x1,y0-1,x1+200,y1+1)).text()
 			invoice.num = invoice.num.replace("INVOICE NUMBER:",'')
 			invoice.num = re.sub(r'\W+', "", invoice.num)
-			
-		
+
+
 
 
 		#PO
 
-		pdf_id = pdf.pq('LTTextLineHorizontal:contains("'+str('CUSTOMER P.O. NUMBER')+'")') 
+		pdf_id = pdf.pq('LTTextLineHorizontal:contains("'+str('CUSTOMER P.O. NUMBER')+'")')
 		if(pdf_id):
 			x0 = float(pdf_id.attr('x0')) #Left X
 			y0 = float(pdf_id.attr('y0')) #Lower Y
@@ -808,23 +814,23 @@ class Invoices:
 			y1 = float(pdf_id.attr('y1')) #Upper Y
 			invoice.po  = pdf.pq('LTTextLineHorizontal:in_bbox("%s, %s, %s, %s")' % (x0-1,y0-15,x1+200,y1)).text()
 			invoice.po = invoice.po.replace("CUSTOMER P.O. NUMBER:",'')
-			
+
 
 		#JOB
 		if(pdf_id):
-			pdf_id = pdf.pq('LTTextLineHorizontal:contains("'+str('FEDERAL ID:')+'")') 
+			pdf_id = pdf.pq('LTTextLineHorizontal:contains("'+str('FEDERAL ID:')+'")')
 			x0 = float(pdf_id.attr('x0')) #Left X
 			y0 = float(pdf_id.attr('y0')) #Lower Y
 			x1 = float(pdf_id.attr('x1')) #Right X
 			y1 = float(pdf_id.attr('y1')) #Upper Y
 			invoice.job  = pdf.pq('LTTextLineHorizontal:in_bbox("%s, %s, %s, %s")' % (x0-100,y0-100,x1,y0)).text()
-		
+
 		return invoice
 
 	#Identifier: lu-az.com
 	def lightning_unlimited(invoice,pdf):
 		#INVOICE
-		pdf_id = pdf.pq('LTTextLineHorizontal:contains("'+str('Invoice')+'")') 
+		pdf_id = pdf.pq('LTTextLineHorizontal:contains("'+str('Invoice')+'")')
 		x0 = float(pdf_id.attr('x0')) #Left X
 		y0 = float(pdf_id.attr('y0')) #Lower Y
 		x1 = float(pdf_id.attr('x1')) #Right X
@@ -832,9 +838,9 @@ class Invoices:
 		invoice.num  = pdf.pq('LTTextLineHorizontal:overlaps_bbox("%s, %s, %s, %s")' % (x1,y0-10,x1+10,y0)).text()
 		invoice.num = invoice.num.replace("Invoice",'')
 		invoice.num = invoice.num.replace("#",'')
-		
+
 		#PO
-		pdf_id = pdf.pq('LTTextLineHorizontal:contains("'+str('Ship Via')+'")') 
+		pdf_id = pdf.pq('LTTextLineHorizontal:contains("'+str('Ship Via')+'")')
 		x0 = float(pdf_id.attr('x0')) #Left X
 		y0 = float(pdf_id.attr('y0')) #Lower Y
 		x1 = float(pdf_id.attr('x1')) #Right X
@@ -842,28 +848,28 @@ class Invoices:
 		invoice.po  = pdf.pq('LTTextLineHorizontal:overlaps_bbox("%s, %s, %s, %s")' % (x0-100,y0-15,x0-1,y0-1)).text()
 
 		#JOB
-		pdf_id = pdf.pq('LTTextLineHorizontal:contains("'+str('Job Number')+'")') 
+		pdf_id = pdf.pq('LTTextLineHorizontal:contains("'+str('Job Number')+'")')
 		x0 = float(pdf_id.attr('x0')) #Left X
 		y0 = float(pdf_id.attr('y0')) #Lower Y
 		x1 = float(pdf_id.attr('x1')) #Right X
 		y1 = float(pdf_id.attr('y1')) #Upper Y
 		invoice.job  = pdf.pq('LTTextLineHorizontal:in_bbox("%s, %s, %s, %s")' % (x0-1,y0-10,x1+10,y0)).text()
-			
+
 		return invoice
 
 	#Identifier: newwesternrentals.com
 	def new_western(invoice,pdf):
 		#INVOICE
-		pdf_id = pdf.pq('LTTextLineHorizontal:contains("'+str('Invoice')+'")') 
+		pdf_id = pdf.pq('LTTextLineHorizontal:contains("'+str('Invoice')+'")')
 		x0 = float(pdf_id.attr('x0')) #Left X
 		y0 = float(pdf_id.attr('y0')) #Lower Y
 		x1 = float(pdf_id.attr('x1')) #Right X
 		y1 = float(pdf_id.attr('y1')) #Upper Y
 		invoice.num  = pdf.pq('LTTextLineHorizontal:in_bbox("%s, %s, %s, %s")' % (x1,y0,x1+100,y1)).text()
 
-		
+
 		#PO
-		pdf_id = pdf.pq('LTTextLineHorizontal:contains("'+str('PO #:')+'")') 
+		pdf_id = pdf.pq('LTTextLineHorizontal:contains("'+str('PO #:')+'")')
 		x0 = float(pdf_id.attr('x0')) #Left X
 		y0 = float(pdf_id.attr('y0')) #Lower Y
 		x1 = float(pdf_id.attr('x1')) #Right X
@@ -876,7 +882,7 @@ class Invoices:
 
 		#13090 273.25, 659.946, 431.947, 670.82
 
-		pdf_id = pdf.pq('LTTextLineHorizontal:contains("'+str('Job Descr:')+'")') 
+		pdf_id = pdf.pq('LTTextLineHorizontal:contains("'+str('Job Descr:')+'")')
 		x0 = float(pdf_id.attr('x0')) #Left X
 		y0 = float(pdf_id.attr('y0')) #Lower Y
 		x1 = float(pdf_id.attr('x1')) #Right X
@@ -885,22 +891,22 @@ class Invoices:
 		invoice.job = invoice.job.replace("Job Descr","");
 		invoice.job = invoice.job.replace(":","");
 
-	
+
 		return invoice
 
 	#Identifier: ProBox Portable Storage
 	def pro_box(invoice,pdf):
 		#INVOICE
-		pdf_id = pdf.pq('LTTextLineHorizontal:contains("'+str('Invoice #')+'")') 
+		pdf_id = pdf.pq('LTTextLineHorizontal:contains("'+str('Invoice #')+'")')
 		x0 = float(pdf_id.attr('x0')) #Left X
 		y0 = float(pdf_id.attr('y0')) #Lower Y
 		x1 = float(pdf_id.attr('x1')) #Right X
 		y1 = float(pdf_id.attr('y1')) #Upper Y
 		invoice.num  = pdf.pq('LTTextLineHorizontal:in_bbox("%s, %s, %s, %s")' % (x1+1,y0,x1+200,y1)).text()
 
-		
+
 		#PO
-		pdf_id = pdf.pq('LTTextLineHorizontal:contains("'+str('PO #')+'")') 
+		pdf_id = pdf.pq('LTTextLineHorizontal:contains("'+str('PO #')+'")')
 		x0 = float(pdf_id.attr('x0')) #Left X
 		y0 = float(pdf_id.attr('y0')) #Lower Y
 		x1 = float(pdf_id.attr('x1')) #Right X
@@ -909,7 +915,7 @@ class Invoices:
 
 
 		#JOB
-		pdf_id = pdf.pq('LTTextLineHorizontal:contains("'+str('Delivered To')+'")') 
+		pdf_id = pdf.pq('LTTextLineHorizontal:contains("'+str('Delivered To')+'")')
 		x0 = float(pdf_id.attr('x0')) #Left X
 		y0 = float(pdf_id.attr('y0')) #Lower Y
 		x1 = float(pdf_id.attr('x1')) #Right X
@@ -921,16 +927,16 @@ class Invoices:
 	#Identifier: Damage Waiver is NOT INSURANCE
 	def ross_equipment(invoice,pdf):
 		#INVOICE
-		pdf_id = pdf.pq('LTTextLineHorizontal:contains("'+str('Invoice #')+'")') 
+		pdf_id = pdf.pq('LTTextLineHorizontal:contains("'+str('Invoice #')+'")')
 		x0 = float(pdf_id.attr('x0')) #Left X
 		y0 = float(pdf_id.attr('y0')) #Lower Y
 		x1 = float(pdf_id.attr('x1')) #Right X
 		y1 = float(pdf_id.attr('y1')) #Upper Y
 		invoice.num  = pdf.pq('LTTextLineHorizontal:in_bbox("%s, %s, %s, %s")' % (x1+1,y0,x1+200,y1)).text()
 		invoice.num = re.sub('[\W]','',invoice.num)
-		
+
 		#PO
-		pdf_id = pdf.pq('LTTextLineHorizontal:contains("'+str('P.O.')+'")') 
+		pdf_id = pdf.pq('LTTextLineHorizontal:contains("'+str('P.O.')+'")')
 		x0 = float(pdf_id.attr('x0')) #Left X
 		y0 = float(pdf_id.attr('y0')) #Lower Y
 		x1 = float(pdf_id.attr('x1')) #Right X
@@ -940,8 +946,8 @@ class Invoices:
 
 		#JOB
 		pdf_id = pdf.pq('LTTextLineHorizontal:contains("'+str('job No')+'")')
-		if(not pdf_id): 
-			pdf_id = pdf.pq('LTTextLineHorizontal:contains("'+str('Job No')+'")')	
+		if(not pdf_id):
+			pdf_id = pdf.pq('LTTextLineHorizontal:contains("'+str('Job No')+'")')
 
 		invoice.job  = pdf.pq('LTTextLineHorizontal:in_bbox("%s, %s, %s, %s")' % (x1+1,y0-1,x1+200,y1+1)).text()
 		invoice.job = invoice.job.replace(".",'')
@@ -950,17 +956,17 @@ class Invoices:
 	#Identifier: Southwest Fastener LLC
 	def southwest_fastener(invoice,pdf):
 		#INVOICE
-		pdf_id = pdf.pq('LTTextLineHorizontal:contains("'+str('Invoice')+'")') 
+		pdf_id = pdf.pq('LTTextLineHorizontal:contains("'+str('Invoice')+'")')
 		x0 = float(pdf_id.attr('x0')) #Left X
 		y0 = float(pdf_id.attr('y0')) #Lower Y
 		x1 = float(pdf_id.attr('x1')) #Right X
 		y1 = float(pdf_id.attr('y1')) #Upper Y
 		invoice.num  = pdf.pq('LTTextLineHorizontal:overlaps_bbox("%s, %s, %s, %s")' % (x1,y1,x1+200,y1+10)).text()
 		invoice.num = re.sub('Invoice','',invoice.num)
-		
+
 		#PO
-		pdf_id = pdf.pq('LTTextLineHorizontal:contains("'+str('PO Number')+'")') 
-		
+		pdf_id = pdf.pq('LTTextLineHorizontal:contains("'+str('PO Number')+'")')
+
 		if(pdf_id):
 			x0 = float(pdf_id.attr('x0')) #Left X
 			y0 = float(pdf_id.attr('y0')) #Lower Y
@@ -970,7 +976,7 @@ class Invoices:
 			invoice.po = invoice.po.replace("PO Number",'')
 
 		#JOB
-		pdf_id = pdf.pq('LTTextLineHorizontal:contains("'+str('Ship To:')+'")') 
+		pdf_id = pdf.pq('LTTextLineHorizontal:contains("'+str('Ship To:')+'")')
 		if(pdf_id):
 			x0 = float(pdf_id.attr('x0')) #Left X
 			y0 = float(pdf_id.attr('y0')) #Lower Y
@@ -984,7 +990,7 @@ class Invoices:
 	#Identifier: summit.com
 	def summit_electric(invoice,pdf):
 		#INVOICE
-		pdf_id = pdf.pq('LTTextLineHorizontal:contains("'+str('INVOICE')+'")') 
+		pdf_id = pdf.pq('LTTextLineHorizontal:contains("'+str('INVOICE')+'")')
 		x0 = float(pdf_id.attr('x0')) #Left X
 		y0 = float(pdf_id.attr('y0')) #Lower Y
 		x1 = float(pdf_id.attr('x1')) #Right X
@@ -992,9 +998,9 @@ class Invoices:
 		invoice.num  = pdf.pq('LTTextLineHorizontal:overlaps_bbox("%s, %s, %s, %s")' % (x0-10,y0-5,x1+50,y1)).text()
 		invoice.num = invoice.num.replace("INVOICE",'')
 		invoice.num = invoice.num.replace("NUMBER",'')
-		
+
 		#PO
-		pdf_id = pdf.pq('LTTextLineHorizontal:contains("'+str('PURCHASE ORDER')+'")') 
+		pdf_id = pdf.pq('LTTextLineHorizontal:contains("'+str('PURCHASE ORDER')+'")')
 		x0 = float(pdf_id.attr('x0')) #Left X
 		y0 = float(pdf_id.attr('y0')) #Lower Y
 		x1 = float(pdf_id.attr('x1')) #Right X
@@ -1008,7 +1014,7 @@ class Invoices:
 			invoice.po = '2' + str(invoice.po)
 
 		#JOB
-		pdf_id = pdf.pq('LTTextLineHorizontal:contains("'+str('JOB NAME')+'")') 
+		pdf_id = pdf.pq('LTTextLineHorizontal:contains("'+str('JOB NAME')+'")')
 		x0 = float(pdf_id.attr('x0')) #Left X
 		y0 = float(pdf_id.attr('y0')) #Lower Y
 		x1 = float(pdf_id.attr('x1')) #Right X
@@ -1021,7 +1027,7 @@ class Invoices:
 	#Identifier: ur.com
 	def united_rentals(invoice,pdf):
 		#INVOICE
-		pdf_id = pdf.pq('LTTextLineHorizontal:contains("'+str('INVOICE')+'")') 
+		pdf_id = pdf.pq('LTTextLineHorizontal:contains("'+str('INVOICE')+'")')
 		x0 = float(pdf_id.attr('x0')) #Left X
 		y0 = float(pdf_id.attr('y0')) #Lower Y
 		x1 = float(pdf_id.attr('x1')) #Right X
@@ -1029,9 +1035,9 @@ class Invoices:
 		invoice.num  = pdf.pq('LTTextLineHorizontal:overlaps_bbox("%s, %s, %s, %s")' % (x0-30,y0-15,x1+200,y0)).text()
 		invoice.num =invoice.num.replace("#",'').replace('INVOICE','')
 
-		
+
 		#PO
-		pdf_id = pdf.pq('LTTextLineHorizontal:contains("'+str('P.O.')+'")') 
+		pdf_id = pdf.pq('LTTextLineHorizontal:contains("'+str('P.O.')+'")')
 		x0 = float(pdf_id.attr('x0')) #Left X
 		y0 = float(pdf_id.attr('y0')) #Lower Y
 		x1 = float(pdf_id.attr('x1')) #Right X
@@ -1041,7 +1047,7 @@ class Invoices:
 		invoice.po =invoice.po.replace("#",'')
 
 		#JOB
-		pdf_id = pdf.pq('LTTextLineHorizontal:contains("'+str('job Ldc')+'")') 
+		pdf_id = pdf.pq('LTTextLineHorizontal:contains("'+str('job Ldc')+'")')
 		x0 = float(pdf_id.attr('x0')) #Left X
 		y0 = float(pdf_id.attr('y0')) #Lower Y
 		x1 = float(pdf_id.attr('x1')) #Right X
@@ -1052,7 +1058,9 @@ class Invoices:
 
 		return invoice
 
-	identifiers = {'Anixter Power Solutions, LLC' : anixter,
+	identifiers = {
+	'Anixter': anixter,
+	'Anixter Power Solutions, LLC' : anixter,
 	'WESCO.COM' : wesco,
 	'apacherentals.com': apache_rentals,
 	'fishertools.com' : fisher_tools,
@@ -1066,12 +1074,13 @@ class Invoices:
 	'abreakerco.com' :a_breaker,
 	'acmetool.com' : acme_tool,
 	'bazzillengraving.com' : bazzille,
+	'www.borderstates': border_state_electric,
 	'BSE Invoice': border_state_electric,
 	'602-431-0068' : first_cut,
 	'UNICOA': glendale_industrial,
 	'graybar.com' : graybar,
 	'whitecap.com' : white_cap,
-	'us.hilti.com' : hilti, 
+	'us.hilti.com' : hilti,
 	'lu-az.com' : lightning_unlimited,
 	'newwesternrentals.com' : new_western,
 	'ProBox Portable Storage': pro_box,

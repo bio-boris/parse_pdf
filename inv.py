@@ -373,15 +373,27 @@ class Invoices:
 		invoice.num = invoice.num.replace(" ",'',1)
 
 		if not invoice.num:
-			invoice.num  = pdf.pq('LTTextLineHorizontal:in_bbox("%s, %s, %s, %s")' % (487.08, 700.872, 560.838, 713.979)).text()
+			invoice.num  = pdf.pq('LTTextLineHorizontal:in_bbox("%s, %s, %s, %s")' % (487.08, 700.872, 560.838, 714)).text()
+		if not invoice.num:
+			invoice.num = pdf.pq('LTTextLineHorizontal:in_bbox("%s, %s, %s, %s")' % (487.08, 700.971, 560.838, 719.147)).text()
+		if not invoice.num:
+			invoice.num = pdf.pq('LTTextLineHorizontal:in_bbox("%s, %s, %s, %s")' % (487.08, 700.611, 560.838, 718.787)).text()
+		if not invoice.num:
+			invoice.num = pdf.pq('LTTextLineHorizontal:overlaps_bbox("%s, %s, %s, %s")' % (487.08, 700.611, 560.838, 718.787)).text()
+
 
 
 		invoice.po  = pdf.pq('LTTextLineHorizontal:in_bbox("%s, %s, %s, %s")' % (108, 524, 150, 543)).text()
 		if not invoice.po:
-			invoice.po  = pdf.pq('LTTextLineHorizontal:in_bbox("%s, %s, %s, %s")' % (120.24, 526.992, 151.761, 540.099)).text()
+			invoice.po  = pdf.pq('LTTextLineHorizontal:in_bbox("%s, %s, %s, %s")' % (120.24, 526.992, 151.761, 555)).text()
+		if not invoice.po:														    
+			invoice.po  = pdf.pq('LTTextLineHorizontal:in_bbox("%s, %s, %s, %s")' % (117, 526.731, 151.401, 544.907)).text()
+		if not invoice.po:
+			invoice.po = pdf.pq('LTTextLineHorizontal:in_bbox("%s, %s, %s, %s")' % 	(120.24, 526.731, 151.761, 544.907)).text()
 
 
-		# invoice_string = "51294"
+
+		# invoice_string = "S2660607.001"
 		# pdf_id =  pdf.pq('LTTextLineHorizontal:contains("'+str(invoice_string)+'")')
 		# x0 = float(pdf_id.attr('x0')) #Left X
 		# y0 = float(pdf_id.attr('y0')) #Lower Y
@@ -1073,6 +1085,7 @@ class Invoices:
 	'480-308-0500':ies_supply,
 	'abreakerco.com' :a_breaker,
 	'acmetool.com' : acme_tool,
+	'acetoo1 .com' : acme_tool,
 	'bazzillengraving.com' : bazzille,
 	'www.borderstates': border_state_electric,
 	'BSE Invoice': border_state_electric,

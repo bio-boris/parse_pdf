@@ -451,41 +451,59 @@ class Invoices:
 		invoice_string = "Invoice"
 		invoice_string2 = "Invoice #"
 		pdf_id =  pdf.pq('LTTextLineHorizontal:contains("'+str(invoice_string)+'")')
-		if(not pdf_id):
+		if(pdf_id):
 			pdf_id =  pdf.pq('LTTextLineHorizontal:contains("'+str(invoice_string2)+'")')
+		if(not pdf_id):
+			pdf_id =  pdf.pq('LTTextLineHorizontal:contains("'+str("I01913414")+'")')
+		if(pdf_id):
+			x0 = float(pdf_id.attr('x0')) #Left X
+			y0 = float(pdf_id.attr('y0')) #Lower Y
+			x1 = float(pdf_id.attr('x1')) #Right X
+			y1 = float(pdf_id.attr('y1')) #Upper Y
+			invoice.num  = pdf.pq('LTTextLineHorizontal:in_bbox("%s, %s, %s, %s")' % (x0,y0-1,x1+300,y1+1)).text()
+			invoice.num = invoice.num.replace("Invoice#","")
+			invoice.num = invoice.num.replace(".","")
+		else:
+			invoice.num  = pdf.pq('LTTextLineHorizontal:overlaps_bbox("%s, %s, %s, %s")' % (358.925, 753.269, 393.682, 763.536)).text()
+			#358.925, 753.269, 393.682, 763.536
 
-
-		x0 = float(pdf_id.attr('x0')) #Left X
-		y0 = float(pdf_id.attr('y0')) #Lower Y
-		x1 = float(pdf_id.attr('x1')) #Right X
-		y1 = float(pdf_id.attr('y1')) #Upper Y
-		invoice.num  = pdf.pq('LTTextLineHorizontal:in_bbox("%s, %s, %s, %s")' % (x0,y0-1,x1+300,y1+1)).text()
-		invoice.num = invoice.num.replace("Invoice#","")
-		invoice.num = invoice.num.replace(".","")
-
+		
 		#JOB
 		job_string = "Reference #"
 		pdf_id =  pdf.pq('LTTextLineHorizontal:contains("'+str(job_string)+'")')
-		x0 = float(pdf_id.attr('x0')) #Left X
-		y0 = float(pdf_id.attr('y0')) #Lower Y
-		x1 = float(pdf_id.attr('x1')) #Right X
-		y1 = float(pdf_id.attr('y1')) #Upper Y
-		invoice.job  = pdf.pq('LTTextLineHorizontal:in_bbox("%s, %s, %s, %s")' % (x0,y0-1,x1+300,y1+1)).text()
-		invoice.job = invoice.job.replace(job_string,"")
-		invoice.job = invoice.job.replace(".","")
+		if pdf_id:
+			x0 = float(pdf_id.attr('x0')) #Left X
+			y0 = float(pdf_id.attr('y0')) #Lower Y
+			x1 = float(pdf_id.attr('x1')) #Right X
+			y1 = float(pdf_id.attr('y1')) #Upper Y
+			invoice.job  = pdf.pq('LTTextLineHorizontal:in_bbox("%s, %s, %s, %s")' % (x0,y0-1,x1+300,y1+1)).text()
+			invoice.job = invoice.job.replace(job_string,"")
+			invoice.job = invoice.job.replace(".","")
+		else:
+			invoice.job  = pdf.pq('LTTextLineHorizontal:in_bbox("%s, %s, %s, %s")' % (460, 753, 495, 764)).text()
+
+	
+
+
 
 		#PO
 		po_string = "PO #"
 		pdf_id =  pdf.pq('LTTextLineHorizontal:contains("'+str(po_string)+'")')
-		x0 = float(pdf_id.attr('x0')) #Left X
-		y0 = float(pdf_id.attr('y0')) #Lower Y
-		x1 = float(pdf_id.attr('x1')) #Right X
-		y1 = float(pdf_id.attr('y1')) #Upper Y
-		invoice.po  = pdf.pq('LTTextLineHorizontal:in_bbox("%s, %s, %s, %s")' % (x0,y0-1,x1+300,y1+1)).text()
-		invoice.po = invoice.po.replace(po_string,"")
-		invoice.po = invoice.po.replace(".","")
+		if(pdf_id):
+			x0 = float(pdf_id.attr('x0')) #Left X
+			y0 = float(pdf_id.attr('y0')) #Lower Y
+			x1 = float(pdf_id.attr('x1')) #Right X
+			y1 = float(pdf_id.attr('y1')) #Upper Y
+			invoice.po  = pdf.pq('LTTextLineHorizontal:in_bbox("%s, %s, %s, %s")' % (x0,y0-1,x1+300,y1+1)).text()
+			invoice.po = invoice.po.replace(po_string,"")
+			invoice.po = invoice.po.replace(".","")
+		else:
+			invoice.po  = pdf.pq('LTTextLineHorizontal:in_bbox("%s, %s, %s, %s")' % (440, 743, 505, 752)).text()
+
+		invoice.num =invoice.num.replace(invoice.job,"")
 
 		return invoice
+
 
 
 	#www.Ahern.com

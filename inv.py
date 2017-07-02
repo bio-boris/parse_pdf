@@ -3,13 +3,13 @@ import re
 
 
 class Invoice:
-	unknown_invoice = False;
-	complete = False;
-	page = None;
-	num = None;
-	po = None;
-	job = None;
-	identifier = None;
+	unknown_invoice = False
+	complete = False
+	page = None
+	num = None
+	po = None
+	job = None
+	identifier = None
 
 	def setCompletionFlag(self):
 		if(self.job !=None and self.po !=None):
@@ -861,29 +861,32 @@ class Invoices:
 	def lightning_unlimited(invoice,pdf):
 		#INVOICE
 		pdf_id = pdf.pq('LTTextLineHorizontal:contains("'+str('Invoice')+'")')
-		x0 = float(pdf_id.attr('x0')) #Left X
-		y0 = float(pdf_id.attr('y0')) #Lower Y
-		x1 = float(pdf_id.attr('x1')) #Right X
-		y1 = float(pdf_id.attr('y1')) #Upper Y
-		invoice.num  = pdf.pq('LTTextLineHorizontal:overlaps_bbox("%s, %s, %s, %s")' % (x1,y0-10,x1+10,y0)).text()
-		invoice.num = invoice.num.replace("Invoice",'')
-		invoice.num = invoice.num.replace("#",'')
+		if pdf_id:
+			x0 = float(pdf_id.attr('x0')) #Left X
+			y0 = float(pdf_id.attr('y0')) #Lower Y
+			x1 = float(pdf_id.attr('x1')) #Right X
+			y1 = float(pdf_id.attr('y1')) #Upper Y
+			invoice.num  = pdf.pq('LTTextLineHorizontal:overlaps_bbox("%s, %s, %s, %s")' % (x1,y0-10,x1+10,y0)).text()
+			invoice.num = invoice.num.replace("Invoice",'')
+			invoice.num = invoice.num.replace("#",'')
 
 		#PO
 		pdf_id = pdf.pq('LTTextLineHorizontal:contains("'+str('Ship Via')+'")')
-		x0 = float(pdf_id.attr('x0')) #Left X
-		y0 = float(pdf_id.attr('y0')) #Lower Y
-		x1 = float(pdf_id.attr('x1')) #Right X
-		y1 = float(pdf_id.attr('y1')) #Upper Y
-		invoice.po  = pdf.pq('LTTextLineHorizontal:overlaps_bbox("%s, %s, %s, %s")' % (x0-100,y0-15,x0-1,y0-1)).text()
+		if pdf_id:
+			x0 = float(pdf_id.attr('x0')) #Left X
+			y0 = float(pdf_id.attr('y0')) #Lower Y
+			x1 = float(pdf_id.attr('x1')) #Right X
+			y1 = float(pdf_id.attr('y1')) #Upper Y
+			invoice.po = pdf.pq('LTTextLineHorizontal:overlaps_bbox("%s, %s, %s, %s")' % (x0-100,y0-15,x0-1,y0-1)).text()
 
 		#JOB
 		pdf_id = pdf.pq('LTTextLineHorizontal:contains("'+str('Job Number')+'")')
-		x0 = float(pdf_id.attr('x0')) #Left X
-		y0 = float(pdf_id.attr('y0')) #Lower Y
-		x1 = float(pdf_id.attr('x1')) #Right X
-		y1 = float(pdf_id.attr('y1')) #Upper Y
-		invoice.job  = pdf.pq('LTTextLineHorizontal:in_bbox("%s, %s, %s, %s")' % (x0-1,y0-10,x1+10,y0)).text()
+		if pdf_id:
+			x0 = float(pdf_id.attr('x0')) #Left X
+			y0 = float(pdf_id.attr('y0')) #Lower Y
+			x1 = float(pdf_id.attr('x1')) #Right X
+			y1 = float(pdf_id.attr('y1')) #Upper Y
+			invoice.job  = pdf.pq('LTTextLineHorizontal:in_bbox("%s, %s, %s, %s")' % (x0-1,y0-10,x1+10,y0)).text()
 
 		return invoice
 

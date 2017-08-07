@@ -1030,7 +1030,12 @@ class Invoices:
 		y1 = float(pdf_id.attr('y1')) #Upper Y
 		invoice.num  = pdf.pq('LTTextLineHorizontal:overlaps_bbox("%s, %s, %s, %s")' % (x0-10,y0-5,x1+50,y1)).text()
 		invoice.num = invoice.num.replace("INVOICE",'')
+		invoice.num = invoice.num.replace("ACCOUNT",'')
 		invoice.num = invoice.num.replace("NUMBER",'')
+		invoice.num = invoice.num.replace("DATE",'')
+		import re
+		expr = re.compile('\d{2}/\d{2}/\d{4}')
+		invoice.num = re.sub(expr, '', invoice.num) 
 
 		#PO
 		pdf_id = pdf.pq('LTTextLineHorizontal:contains("'+str('PURCHASE ORDER')+'")')
@@ -1048,13 +1053,15 @@ class Invoices:
 
 		#JOB
 		pdf_id = pdf.pq('LTTextLineHorizontal:contains("'+str('JOB NAME')+'")')
-		x0 = float(pdf_id.attr('x0')) #Left X
-		y0 = float(pdf_id.attr('y0')) #Lower Y
-		x1 = float(pdf_id.attr('x1')) #Right X
-		y1 = float(pdf_id.attr('y1')) #Upper Y
-		invoice.job  = pdf.pq('LTTextLineHorizontal:overlaps_bbox("%s, %s, %s, %s")' % (x0-10,y0-5,x1+50,y1)).text()
-		invoice.job = invoice.job.replace("JOB",'')
-		invoice.job = invoice.job.replace("NAME",'')
+		if pdf_id:	
+			x0 = float(pdf_id.attr('x0')) #Left X
+			y0 = float(pdf_id.attr('y0')) #Lower Y
+			x1 = float(pdf_id.attr('x1')) #Right X
+			y1 = float(pdf_id.attr('y1')) #Upper Y
+			invoice.job  = pdf.pq('LTTextLineHorizontal:overlaps_bbox("%s, %s, %s, %s")' % (x0-10,y0-5,x1+50,y1)).text()
+			invoice.job = invoice.job.replace("JOB",'')
+			invoice.job = invoice.job.replace("NAME",'')
+
 		return invoice
 
 	#Identifier: ur.com
